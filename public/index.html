@@ -39,15 +39,22 @@
         }
 
         #content {
-            line-height: 18px;
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
+            font-size: 1.1rem;
+            word-wrap: break-word;
         }
 
         @media (max-width: 768px) {
             body {
                 width: 100%;
             }
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #333;
+            background-image: linear-gradient(to right, #ccc, #333, #ccc);
         }
     </style>
 </head>
@@ -56,6 +63,7 @@
     <h1>The Skrungler: New Testament Abridged</h1>
     <h2>By the Yellow Babbur</h2>
     <h3 id="loaded-chars">Loaded Characters: 0</h3>
+    <hr>
     <pre id="content"></pre>
     <script>
         let loadedTextLength = 0;
