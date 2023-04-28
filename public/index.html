@@ -60,8 +60,7 @@
     <script>
         let loadedTextLength = 0;
         let bufferText = "";
-        let contentText = "";
-        const bufferLimit = 1000000;
+        const bufferLimit = 250000;
 
         const loadedChars = document.getElementById("loaded-chars");
         const content = document.getElementById("content");
@@ -77,7 +76,7 @@
             loadedChars.innerHTML = `Loaded Characters: ${formatNumber(loadedTextLength)}`;
 
             if (bufferText.length >= bufferLimit) {
-                content.innerText = contentText + bufferText;
+                content.innerHTML += bufferText;
                 bufferText = "";
             }
 
@@ -85,9 +84,9 @@
 
         xhr.onload = function () {
             if (bufferText.length > 0) {
-                content.innerText = contentText + bufferText;
+                content.innerHTML = bufferText;
             } else {
-                content.innerText = e.currentTarget.response;
+                content.innerHTML = e.currentTarget.response;
             }
         };
 
