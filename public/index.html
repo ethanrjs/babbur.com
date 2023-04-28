@@ -8,6 +8,7 @@
     <title>Babbur.com</title>
     <style>
         @import url(https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900);
+        @import url(https://fonts.googleapis.com/css?family=JetBrains+Mono:100,200,300,regular,500,600,700,800,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic);
 
         body {
             width: 50%;
@@ -31,9 +32,10 @@
 
         h3 {
             font-size: 1.1rem;
-            font-weight: 400;
+            font-weight: regular;
             margin-bottom: 1rem;
             color: #888;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         #container {
@@ -93,7 +95,7 @@
         xhr.onprogress = (e) => {
             let text = e.currentTarget.response;
             loadedTextLength = text.length;
-            document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
+            document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${formatNumber(loadedTextLength)}`;
             updateVisibleContent();
         };
 
@@ -105,6 +107,10 @@
 
 
         document.getElementById("container").addEventListener("scroll", updateVisibleContent);
+
+        function formatNumber(num) {
+            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
     </script>
 </body>
 
