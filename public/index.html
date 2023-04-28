@@ -67,7 +67,7 @@
     </div>
     <script>
         let loadedTextLength = 0;
-        let allTextLines = [];
+        let text = "";
 
         function updateVisibleContent() {
             const container = document.getElementById("container");
@@ -79,8 +79,8 @@
             const firstVisibleLine = Math.floor(scrollTop / lineHeight);
             const lastVisibleLine = firstVisibleLine + linesPerContainer;
 
-            const newText = allTextLines.slice(firstVisibleLine, lastVisibleLine).join(" ");
-            content.innerText = newText;
+            const newText = text.substring(0, lastVisibleLine * 80);
+            content.innerHTML = newText;
 
             content.style.top = `${firstVisibleLine * lineHeight}px`;
         }
@@ -90,13 +90,11 @@
         xhr.open("GET", "/bibblur", true);
         xhr.responseType = "text";
 
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                allTextLines = xhr.response.split(" ");
-                loadedTextLength = xhr.response.length;
-                document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
-                updateVisibleContent();
-            }
+        xhr.onprogress = (e) => {
+            let text = e.currentTarget.response;
+            loadedTextLength = text.length;
+            document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
+            updateVisibleContent();
         };
 
         xhr.onerror = function () {
