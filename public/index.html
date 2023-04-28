@@ -63,10 +63,13 @@
         let contentText = "";
         const bufferLimit = 1000000;
 
+        const loadedChars = document.getElementById("loaded-chars");
+        const content = document.getElementById("content");
+
         function appendBufferToContent() {
             contentText += bufferText;
             bufferText = "";
-            document.getElementById("content").innerText = contentText;
+            content.innerText = contentText;
         }
 
         const xhr = new XMLHttpRequest();
@@ -76,7 +79,7 @@
         xhr.onprogress = (e) => {
             bufferText += e.currentTarget.response.slice(loadedTextLength);
             loadedTextLength = e.currentTarget.response.length;
-            document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${formatNumber(loadedTextLength)}`;
+            loadedChars.innerHTML = `Loaded Characters: ${formatNumber(loadedTextLength)}`;
 
             if (bufferText.length >= bufferLimit) {
                 appendBufferToContent();
