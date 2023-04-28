@@ -38,18 +38,10 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        #container {
-            height: 400px;
-            overflow: auto;
-            position: relative;
-        }
-
         #content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            white-space: pre-wrap;
             line-height: 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
         }
 
         @media (max-width: 768px) {
@@ -64,30 +56,17 @@
     <h1>The Skrungler: New Testament Abridged</h1>
     <h2>By the Yellow Babbur</h2>
     <h3 id="loaded-chars">Loaded Characters: 0</h3>
-    <div id="container">
-        <pre id="content"></pre>
-    </div>
+    <pre id="content"></pre>
     <script>
         let loadedTextLength = 0;
-        let text = "";
+        let bufferText = "";
+        let contentText = "";
+        const bufferLimit = 1000000;
 
-        function updateVisibleContent() {
-            const container = document.getElementById("container");
-            const scrollTop = container.scrollTop;
-            const content = document.getElementById("content");
-
-            const lineHeight = 18; // Adjust this value based on your text's line-height
-            const linesPerContainer = Math.ceil(container.clientHeight / lineHeight);
-            const firstVisibleLine = Math.floor(scrollTop / lineHeight);
-            const lastVisibleLine = firstVisibleLine + linesPerContainer;
-
-            const firstVisibleChar = Math.floor(scrollTop / lineHeight);
-            const lastVisibleChar = firstVisibleChar + (linesPerContainer * 50);
-
-            const visibleText = text.substring(firstVisibleChar, lastVisibleChar);
-            content.innerText = visibleText;
-
-            content.style.top = `${firstVisibleLine * lineHeight}px`;
+        function appendBufferToContent() {
+            contentText += bufferText;
+            bufferText = "";
+            document.getElementById("content").innerText = contentText;
         }
 
         const xhr = new XMLHttpRequest();
@@ -95,18 +74,25 @@
         xhr.responseType = "text";
 
         xhr.onprogress = (e) => {
-            text = e.currentTarget.response;
-            loadedTextLength = text.length;
+            bufferText += e.currentTarget.response.slice(loadedTextLength);
+            loadedTextLength = e.currentTarget.response.length;
             document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${formatNumber(loadedTextLength)}`;
-            updateVisibleContent();
+
+            if (bufferText.length >= bufferLimit) {
+                appendBufferToContent();
+            }
+        };
+
+        xhr.onload = function () {
+            if (bufferText.length > 0) {
+                appendBufferToContent();
+            }
         };
 
         xhr.onerror = function () {
             console.error("An error occurred during the request.");
         };
         xhr.send();
-
-        document.getElementById("container").addEventListener("scroll", updateVisibleContent);
 
         function formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
