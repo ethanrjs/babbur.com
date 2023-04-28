@@ -47,6 +47,7 @@
             top: 0;
             left: 0;
             white-space: pre-wrap;
+            line-height: 18px;
         }
 
         @media (max-width: 768px) {
@@ -78,32 +79,32 @@
             const firstVisibleLine = Math.floor(scrollTop / lineHeight);
             const lastVisibleLine = firstVisibleLine + linesPerContainer;
 
-            const newText = allTextLines.slice(firstVisibleLine, lastVisibleLine).join("\n");
+            const newText = allTextLines.slice(firstVisibleLine, lastVisibleLine).join(" ");
             content.innerText = newText;
 
             content.style.top = `${firstVisibleLine * lineHeight}px`;
         }
 
-        window.onload = function () {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "/bibblur", true);
-            xhr.responseType = "text";
 
-            xhr.onload = function () {
-                if (xhr.status == 200) {
-                    allTextLines = xhr.response.split("\n");
-                    loadedTextLength = xhr.response.length;
-                    document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
-                    updateVisibleContent();
-                }
-            };
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "/bibblur", true);
+        xhr.responseType = "text";
 
-            xhr.onerror = function () {
-                console.error("An error occurred during the request.");
-            };
-
-            xhr.send();
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                allTextLines = xhr.response.split(" ");
+                loadedTextLength = xhr.response.length;
+                document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
+                updateVisibleContent();
+            }
         };
+
+        xhr.onerror = function () {
+            console.error("An error occurred during the request.");
+        };
+
+        xhr.send();
+
 
         document.getElementById("container").addEventListener("scroll", updateVisibleContent);
     </script>
