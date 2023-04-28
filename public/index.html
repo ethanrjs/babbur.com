@@ -15,7 +15,6 @@
             font-family: 'Inter', sans-serif;
             padding-top: 2rem;
             color: #333;
-            line-height: 18px;
         }
 
         h1 {
@@ -31,9 +30,10 @@
         }
 
         h3 {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 400;
             margin-bottom: 1rem;
+            color: #888;
         }
 
         #container {
@@ -51,7 +51,7 @@
 
         @media (max-width: 768px) {
             body {
-                width: 90%;
+                width: 100%;
             }
         }
     </style>
@@ -87,11 +87,12 @@
         window.onload = function () {
             const xhr = new XMLHttpRequest();
             xhr.open("GET", "/bibblur", true);
+            xhr.responseType = "text";
 
             xhr.onload = function () {
                 if (xhr.status == 200) {
-                    allTextLines = xhr.responseText.split("\n");
-                    loadedTextLength = xhr.responseText.length;
+                    allTextLines = xhr.response.split("\n");
+                    loadedTextLength = xhr.response.length;
                     document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
                     updateVisibleContent();
                 }
