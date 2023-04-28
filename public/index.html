@@ -81,19 +81,21 @@
             const firstVisibleLine = Math.floor(scrollTop / lineHeight);
             const lastVisibleLine = firstVisibleLine + linesPerContainer;
 
-            const newText = text.substring(0, lastVisibleLine * 80);
-            content.innerHTML = newText;
+            const firstVisibleChar = Math.floor(scrollTop / lineHeight);
+            const lastVisibleChar = firstVisibleChar + (linesPerContainer * 50);
+
+            const visibleText = text.substring(firstVisibleChar, lastVisibleChar);
+            content.innerText = visibleText;
 
             content.style.top = `${firstVisibleLine * lineHeight}px`;
         }
-
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", "/bibblur", true);
         xhr.responseType = "text";
 
         xhr.onprogress = (e) => {
-            let text = e.currentTarget.response;
+            text = e.currentTarget.response;
             loadedTextLength = text.length;
             document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${formatNumber(loadedTextLength)}`;
             updateVisibleContent();
@@ -102,9 +104,7 @@
         xhr.onerror = function () {
             console.error("An error occurred during the request.");
         };
-
         xhr.send();
-
 
         document.getElementById("container").addEventListener("scroll", updateVisibleContent);
 
@@ -112,6 +112,7 @@
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }
     </script>
+
 </body>
 
 </html>
