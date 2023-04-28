@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babbur.com</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900);
+
+        body {
+            width: 50%;
+            margin: 0 auto;
+            font-family: 'Inter', sans-serif;
+            padding-top: 2rem;
+            color: #333;
+            line-height: 18px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        #container {
+            height: 400px;
+            overflow: auto;
+            position: relative;
+        }
+
+        #content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>The Skrungler: New Testament Abridged</h1>
+    <h2>By the Yellow Babbur</h2>
+    <h3 id="loaded-chars">Loaded Characters: 0</h3>
+    <div id="container">
+        <pre id="content"></pre>
+    </div>
+    <script>
+        let loadedTextLength = 0;
+        let allTextLines = [];
+
+        function updateVisibleContent() {
+            const container = document.getElementById("container");
+            const scrollTop = container.scrollTop;
+            const content = document.getElementById("content");
+
+            const lineHeight = 18; // Adjust this value based on your text's line-height
+            const linesPerContainer = Math.ceil(container.clientHeight / lineHeight);
+            const firstVisibleLine = Math.floor(scrollTop / lineHeight);
+            const lastVisibleLine = firstVisibleLine + linesPerContainer;
+
+            const newText = allTextLines.slice(firstVisibleLine, lastVisibleLine).join("\n");
+            content.innerText = newText;
+
+            content.style.top = `${firstVisibleLine * lineHeight}px`;
+        }
+
+        window.onload = function () {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "/bibblur", true);
+
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    allTextLines = xhr.responseText.split("\n");
+                    loadedTextLength = xhr.responseText.length;
+                    document.getElementById("loaded-chars").innerHTML = `Loaded Characters: ${loadedTextLength}`;
+                    updateVisibleContent();
+                }
+            };
+
+            xhr.onerror = function () {
+                console.error("An error occurred during the request.");
+            };
+
+            xhr.send();
+        };
+
+        document.getElementById("container").addEventListener("scroll", updateVisibleContent);
+    </script>
+</body>
+
+</html>
