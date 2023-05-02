@@ -77,6 +77,7 @@ Object.defineProperty(String.prototype, 'black', {
 Object.defineProperty(String.prototype, 'blackBright', {
     get() { return `<span style="${colorStyles.blackBright}">${this}</span>` }
 });
+const prompt = document.getElementById('prompt');
 
 export function println(message, textColor = 'white', backgroundColor = 'black') {
 
@@ -92,6 +93,7 @@ export function println(message, textColor = 'white', backgroundColor = 'black')
     output.appendChild(document.createElement('br'));
 
     output.appendChild(messageDiv);
+    prompt.scrollIntoView(false);
 }
 
 export function print(message, textColor = 'white', backgroundColor = 'black') {
@@ -103,6 +105,7 @@ export function print(message, textColor = 'white', backgroundColor = 'black') {
     messageSpan.innerHTML = message[textColor];
 
     output.appendChild(messageSpan);
+    prompt.scrollIntoView(false);
 }
 
 

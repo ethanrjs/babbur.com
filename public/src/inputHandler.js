@@ -1,7 +1,6 @@
 import { commands } from "./commands.js";
 import { print, println } from "./terminal.js";
 const input = document.getElementById('input');
-const prompt = document.getElementById('prompt');
 
 let history = [];
 let historyIndex = 0;
@@ -59,5 +58,5 @@ input.addEventListener('keydown', async (event) => {
     }
 
     // scroll into view vertically do not scroll horizontally
-    prompt.scrollIntoView(false);
+
 });

@@ -19,14 +19,11 @@ async function loadCommands() {
         await import(`./commands/${command}.js`);
 
         loadedCommands[command] = commands[command];
-        println(`Loaded command ${command}\t\t`)
         // add to page's import map
         let imports = document.querySelector('head script[type="importmap"]')
         let json = JSON.parse(imports.innerHTML)
         json.imports[`commands/${command}.js`] = `./commands/${command}.js`
         imports.innerHTML = JSON.stringify(json)
-
-        print(`Time: ${performance.now() - startTime}ms`.green);
     }
     try {
         for (const command in loadedCommands) {

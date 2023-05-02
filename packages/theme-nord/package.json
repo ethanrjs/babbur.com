@@ -1,0 +1,8 @@
+{
+    "name": "theme-nord",
+    "version": "0.0.1",
+    "description": "Nord theme integration for Ethix",
+    "files": [
+        "index.js"
+    ]
+}

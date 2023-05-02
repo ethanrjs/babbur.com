@@ -4,7 +4,7 @@ import { print, println } from "../src/terminal.js";
 export const packages = {};
 
 registerCommand("epm", "Ethix Package Manager General Command", (args) => {
-    const arg1 = args[0].toLowerCase();
+    const arg1 = args[0]?.toLowerCase() || 'help';
 
     switch (arg1) {
 
@@ -52,7 +52,6 @@ registerCommand("epm", "Ethix Package Manager General Command", (args) => {
 });
 
 async function installPackage(packageName, isDependency = false) {
-    const startTime = performance.now();
     try {
         if (!isDependency) {
             println(`Installing package ${packageName}...`.white);
@@ -63,11 +62,16 @@ async function installPackage(packageName, isDependency = false) {
         }
 
         const packageJson = await fetch(`/packages/${packageName}/package.json`);
+        if (!packageJson.ok) {
+            println(`\tError installing package ${packageName}: Does not exist`.red);
+            return;
+        }
         let packageJsonData;
+
         try {
             packageJsonData = await packageJson.json();
         } catch (err) {
-            println(`\tError installing package ${packageName}: Does not exist`.red);
+            println(`\tError installing package ${packageName}: Invalid package.json`.red);
         }
 
         if (!packageJsonData) return;
@@ -200,5 +204,6 @@ async function loadInstalledPackages() {
         await installPackage(packageName);
     }
 }
+
 
 loadInstalledPackages();

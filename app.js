@@ -7,12 +7,6 @@ const PORT = process.env.PORT || 5000;
 // Serve public files
 app.use(express.static(path.join(__dirname, "public")));
 
-// set cache control
-app.use((req, res, next) => {
-    res.set("Cache-Control", "public, max-age=31557600");
-    next();
-});
-
 // Serve packages
 app.use("/packages", express.static(path.join(__dirname, "packages")));
 

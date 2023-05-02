@@ -1,0 +1,8 @@
+{
+    "name": "snek",
+    "version": "1.0.1",
+    "description": "snek gam",
+    "files": [
+        "index.js"
+    ]
+}
