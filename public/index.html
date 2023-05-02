@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+            {
+                "imports": {
+                    "src/commands.js": "./src/commands.js",
+                    "src/terminal.js": "./src/terminal.js",
+                    "src/init.js": "./src/init.js"
+                }
+            }
+        </script>
+
+    <script defer src="src/commands.js" type="module"></script>
+    <script defer src="src/terminal.js" type="module"></script>
+    <script defer src="src/init.js" type="module"></script>
+    <script defer src="src/inputHandler.js" type="module"></script>
+    <script defer src="script.js" type="module"></script>
+
+
+</head>
+
+<body>
+    <div id="terminal">
+        <div id="output"></div>
+        <div id="input-line">
+            <span id="prompt">$</span>
+            <input id="input" type="text" autocomplete="off" autofocus>
+        </div>
+    </div>
+
+</body>
+
+</html>
