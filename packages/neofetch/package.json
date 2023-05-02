@@ -1,0 +1,9 @@
+{
+    "name": "neofetch",
+    "version": "1.0.2",
+    "description": "A command-line system information tool written in JS",
+    "files": [
+        "index.js"
+    ]
+    
+}
