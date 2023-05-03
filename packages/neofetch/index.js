@@ -2,8 +2,6 @@ import { registerCommand } from "src/commands.js";
 import { print, println, color } from "src/terminal.js";
 let loadStartTime = Date.now()
 
-// use kb
-let storagemsg = localStorageSize() / 1000 + "kb out of 5mb used"
 
 registerCommand("neofetch", "Prints a cool ASCII art logo", () => {
     const logoLines =
@@ -32,7 +30,7 @@ registerCommand("neofetch", "Prints a cool ASCII art logo", () => {
                          
 
 
-`.trim().split('\n').map(line => line.green);
+`.trim().split('\n').map(line => line.greenBright);
 
     const sideLines = `
 root@ethix
@@ -58,21 +56,6 @@ ${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight}
     for (let i = 0; i < paddedLogoLines.length; i++) {
         result += paddedLogoLines[i] + (sideLines[i] || '') + '\n';
     }
-    // 
-    // const colorLine = Object.keys(color).reduce((acc, colorName) => {
-    //     return acc + "███"[colorName];
-    //     // This here, is the ugliest fucking line of code I have written in all 
-    //     // of my years of web development. Why, in gods name, does putting an 
-    //     // array up to a string reference the string's property of the 
-    //     // color name, rather than throwing an error?? Why doesn't it just try
-    //     // to get the char? Not only that, but getting the keynames of 
-    //     // an object, and then reducing, there's like fifteen higher-order
-    //     /// functions in here. Why is this code written like this???
-    //     // I'll never know. I will never understand this language,
-    //     // this god-forsaken terrible programming language that I willingly
-    //     // choose to suffer through writing. 
-    // }, '');
-
     const colors = [
         "",
         "bgRed",
@@ -98,6 +81,16 @@ ${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight}
     // rewrite to work with array
     const colorLine = colors.reduce((acc, colorName) => {
         return acc + "   "[colorName];
+        // This here, is the ugliest fucking line of code I have written in all 
+        //     // of my years of web development. Why, in gods name, does putting an 
+        //     // array up to a string reference the string's property of the 
+        //     // color name, rather than throwing an error?? Why doesn't it just try
+        //     // to get the char? Not only that, but getting the keynames of 
+        //     // an object, and then reducing, there's like fifteen higher-order
+        //     /// functions in here. Why is this code written like this???
+        //     // I'll never know. I will never understand this language,
+        //     // this god-forsaken terrible programming language that I willingly
+        //     // choose to suffer through writing. 
     });
 
     const colorPadding = ' '.repeat(maxLength - 43);

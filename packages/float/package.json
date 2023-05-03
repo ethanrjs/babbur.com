@@ -1,0 +1,9 @@
+{
+    "name": "float",
+    "version": "float",
+    "description": "float: left;",
+    "files": [
+        "index.js"
+    ],
+    "author": "Ethix"
+}

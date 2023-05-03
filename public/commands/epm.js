@@ -22,6 +22,9 @@ registerCommand("epm", "Ethix Package Manager General Command", (args) => {
         case 'update':
             updateAllPackages();
             break;
+        case 'seek':
+            seekPackages();
+            break;
         default:
             displayHelp();
     }
@@ -49,12 +52,12 @@ function handleRemove(args) {
 
 // Handles the search command
 function handleSearch(args) {
-    const arg2 = args[1].toLowerCase();
-    if (!arg2) {
+    const splicedArgs = args.splice(1);
+    if (splicedArgs.length === 0) {
         println("Please specify a query to search for".red);
         return;
     }
-    searchPackage(arg2);
+    searchPackage(splicedArgs.join(" "));
 }
 
 // Displays the help information
@@ -64,6 +67,8 @@ function displayHelp() {
     println("\tepm remove <package> - Remove a package");
     println("\tepm search <query> - Search for a package")
     println("\tepm list - List all installed packages");
+    println("\tepm update - Update all installed packages");
+    println("\tepm seek - Seek all packages in repository");
     println("\tepm help - Show this help");
 }
 
@@ -214,17 +219,27 @@ async function searchPackage(query) {
     const searchResults = await fetch(`/search?q=${query}`);
     const searchResultsJson = await searchResults.json();
 
+
     if (searchResultsJson.length === 0) {
-        println(`No packages found for query ${query}`.yellow);
+        println(`No packages could be found. Run "epm seek" to view all packages.`.redBright);
         return;
     }
 
-    println(`Search results for query ${query}:`.green);
+    if (query === "@ALL") {
+        println(`Search results for all packages:`.green);
+    } else {
+        println(`Search results for query ${query}:`.green);
+    }
     for (const result of searchResultsJson) {
         println(`\t${result.name.green} (${result.version.gray}) - ${result.author.blueBright}`);
         println(`\t\t${result.description}\n`);
 
     }
+}
+
+function seekPackages() {
+    // get all packages
+    searchPackage("@ALL")
 }
 
 async function updateAllPackages() {

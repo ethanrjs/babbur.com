@@ -19,6 +19,8 @@ function refreshPackageList() {
             return;
         }
 
+        let updatedPackages = {};
+
         folders.forEach(folder => {
             const packageJsonPath = path.join(packagesPath, folder, "package.json");
 
@@ -29,21 +31,24 @@ function refreshPackageList() {
                 }
 
                 try {
-                    // Parse package.json and add to packages list
+                    // Parse package.json and add to updated packages list
                     const packageJson = JSON.parse(data);
-                    packages[packageJson.name] = {
+                    updatedPackages[packageJson.name] = {
                         version: packageJson.version || "0.0.0",
                         path: path.join(folder) || "",
                         description: packageJson.description || "",
                         author: packageJson.author || "",
                     }
 
-                    // Write packages list to file
-                    fs.writeFile("packages.json", JSON.stringify(packages, null, 2), (err) => {
-                        if (err) {
-                            console.error("Error writing packages.json:", err);
-                        }
-                    });
+                    // Check if all packages are processed
+                    if (Object.keys(updatedPackages).length === folders.length) {
+                        // Write updated packages list to file
+                        fs.writeFile("packages.json", JSON.stringify(updatedPackages, null, 2), (err) => {
+                            if (err) {
+                                console.error("Error writing packages.json:", err);
+                            }
+                        });
+                    }
                 } catch (error) {
                     console.error(`Error parsing package.json in ${folder}:`, error);
                 }
@@ -81,6 +86,17 @@ app.get("/search", (req, res) => {
     const packages = JSON.parse(fs.readFileSync("packages.json"));
     const results = [];
 
+    if (query === "@ALL") {
+        let packagesWithoutKeys = [];
+        for (const key in packages) {
+            let package = packages[key];
+            package.name = key;
+
+            packagesWithoutKeys.push(packages[key]);
+        }
+        res.send(packagesWithoutKeys);
+        return;
+    }
     // fast fuzzy search
     const searchResults = fastFuzzy.search(query, Object.keys(packages));
 

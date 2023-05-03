@@ -1,8 +1,8 @@
 {
-  "snek": {
-    "version": "1.0.1",
-    "path": "snek",
-    "description": "snek gam",
+  "float": {
+    "version": "float",
+    "path": "float",
+    "description": "float: left;",
     "author": "Ethix"
   },
   "neofetch": {
@@ -11,16 +11,16 @@
     "description": "A command-line system information tool written in JS",
     "author": "Ethix"
   },
-  "theme-nord": {
-    "version": "0.0.1",
-    "path": "theme-nord",
-    "description": "Nord theme integration for Ethix",
-    "author": "Ethix"
-  },
   "uptime": {
     "version": "0.0.2",
     "path": "uptime",
     "description": "how lonmg computer online",
+    "author": "Ethix"
+  },
+  "snek": {
+    "version": "1.0.1",
+    "path": "snek",
+    "description": "snek gam",
     "author": "Ethix"
   }
 }
