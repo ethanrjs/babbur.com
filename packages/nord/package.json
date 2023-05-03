@@ -1,0 +1,9 @@
+{
+    "name": "nord",
+    "description": "A port of the Nord theme for Ethix. Also includes the IBM Plex Mono font, because it's cool.",
+    "version": "1",
+    "author": "Ethix",
+    "files": [
+        "index.js"
+    ]
+}

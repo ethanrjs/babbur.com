@@ -179,6 +179,7 @@ async function removePackage(packageName) {
     if (localStorage.getItem(packageName)) {
         localStorage.removeItem(packageName);
         println(`Package ${packageName} removed successfully`.green);
+        println(`Some packages require you to refresh the page to be fully removed`.yellow)
     } else {
         println(`Package ${packageName} is not installed`.yellow);
     }
