@@ -4,5 +4,6 @@
     "description": "Nord theme integration for Ethix",
     "files": [
         "index.js"
-    ]
+    ],
+    "author": "Ethix"
 }

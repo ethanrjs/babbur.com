@@ -4,5 +4,6 @@
     "description": "snek gam",
     "files": [
         "index.js"
-    ]
+    ],
+    "author": "Ethix"
 }

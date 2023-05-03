@@ -4,6 +4,6 @@
     "description": "A command-line system information tool written in JS",
     "files": [
         "index.js"
-    ]
-    
+    ],
+    "author": "Ethix"
 }

@@ -199,7 +199,7 @@ async function searchPackage(query) {
 
     println(`Search results for query ${query}:`.green);
     for (const result of searchResultsJson) {
-        println(`\t${result.name.green} (${result.version.gray})`);
+        println(`\t${result.name.green} (${result.version.gray}) - ${result.author.blueBright}`);
         println(`\t\t${result.description}\n`);
 
     }

@@ -4,6 +4,8 @@ const input = document.getElementById('input');
 
 let history = [];
 let historyIndex = 0;
+const terminal = document.querySelector('#terminal');
+
 
 input.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
@@ -56,6 +58,12 @@ input.addEventListener('keydown', async (event) => {
             println(matchingCommands.join('   ').gray);
         }
     }
+    terminal.childNodes.forEach(node => {
+        console.log(node.nodeType);
+        if (node.nodeType === Node.TEXT_NODE) {
+            terminal.removeChild(node);
+        }
+    });
 
     input.scrollIntoView(false);
 });
@@ -65,3 +73,10 @@ input.addEventListener('blur', async () => {
 
     input.focus();
 });
+
+terminal.childNodes.forEach(node => {
+    console.log(node.nodeType);
+    if (node.nodeType === Node.TEXT_NODE) {
+        terminal.removeChild(node);
+    }
+}); // dont know why i need this but it works

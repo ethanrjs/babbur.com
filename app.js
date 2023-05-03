@@ -34,6 +34,7 @@ function refreshPackageList() {
                         version: packageJson.version || "0.0.0",
                         path: path.join(folder) || "",
                         description: packageJson.description || "",
+                        author: packageJson.author || "",
                     }
 
                     // Write packages list to file
@@ -86,8 +87,9 @@ app.get("/search", (req, res) => {
     searchResults.forEach(result => {
         results.push({
             name: result,
-            version: packages[result].version,
-            description: packages[result].description,
+            version: packages[result].version || "0.0.0",
+            description: packages[result].description || "No description set",
+            author: packages[result].author || "Anonymous"
         });
     });
 

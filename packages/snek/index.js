@@ -11,6 +11,7 @@ let food;
 let direction;
 let gameOver;
 
+let isPlaying = false;
 function clear() {
     output.innerHTML = ""
 }
@@ -18,6 +19,7 @@ function startSnakeGame() {
     snake = [{ x: width / 2, y: height / 2 }];
     direction = "D";
     gameOver = false;
+    isPlaying = true;
     spawnFood();
     update();
 }
@@ -57,9 +59,10 @@ function update() {
 }
 
 function draw() {
-    let output = "";
+    let output = "┌────────────────────────────────────┐\n".gray;
     clear()
     for (let y = 0; y < height; y++) {
+        output += "│ ".gray;
         for (let x = 0; x < width; x++) {
             const isFood = x === food.x && y === food.y;
             const isSnake = snake.some((segment) => segment.x === x && segment.y === y);
@@ -67,13 +70,22 @@ function draw() {
             if (isFood) {
                 output += "[]".red;
             } else if (isSnake) {
-                output += "██".green;
+                output += "[]".green;
             } else {
-                output += "□ ".gray;
+                output += "~ ".blackBright;
             }
         }
-        output += "\n";
+        output += "│\n".gray;
     }
+
+    output += "├────────────────────────────────────┤".gray;
+    output += "\n│ ".gray;
+    output += "Score: ".gray;
+    output += (snake.length - 1).toString().yellow;
+    output += " ".gray.repeat(32 - 8 - (snake.length - 1).toString().length) + " ";
+    output += "│\n".gray;
+    output += "└────────────────────────────────────┘".gray;
+
 
     println(output);
     // scroll down
@@ -87,15 +99,22 @@ input.addEventListener("keydown", (event) => {
         if (direction === "A" && event.key.toUpperCase() === "D") return;
         if (direction === "S" && event.key.toUpperCase() === "W") return;
         if (direction === "D" && event.key.toUpperCase() === "A") return;
-
+        if (!isPlaying) return;
         direction = event.key.toUpperCase();
+        event.preventDefault();
+
     } else if (event.key.toUpperCase() === "R" && gameOver) {
         startSnakeGame();
+        event.preventDefault();
     } else if (event.key.toUpperCase() === "Q" && gameOver) {
         println("Quitting...".red);
+        event.preventDefault();
+
         gameOver = false;
         clear();
+        isPlaying = false;
     }
+
 });
 
 registerCommand("snek", "Play the snake game", () => {

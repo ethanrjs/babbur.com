@@ -9,7 +9,7 @@ async function loadCommands() {
         'epm',
         'rf',
         'help',
-        'clear'
+        'clear',
     ]
 
     const commandsToLoad = commands;
