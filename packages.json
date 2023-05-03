@@ -6,7 +6,7 @@
     "author": "Ethix"
   },
   "neofetch": {
-    "version": "1.0.3",
+    "version": "1.0.5",
     "path": "neofetch",
     "description": "A command-line system information tool written in JS",
     "author": "Ethix"

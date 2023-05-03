@@ -65,6 +65,8 @@ function displayHelp() {
 }
 
 // Imports and initializes a package
+// Imports and initializes a package
+// Imports and initializes a package
 async function importPackage(packageName, fileName) {
     const importProxy = new Proxy(
         {},
@@ -83,10 +85,27 @@ async function importPackage(packageName, fileName) {
     );
 
     const moduleSpecifier = `/packages/${packageName}/${fileName}`;
-    const module = await import(moduleSpecifier);
-    Object.assign(importProxy, module);
-    importProxy.onReady();
+    try {
+        const response = await fetch(moduleSpecifier);
+        if (!response.ok) {
+            throw new Error(`Error fetching ${moduleSpecifier}`);
+        }
+
+        const moduleText = await response.text();
+        const blob = new Blob([moduleText], { type: "text/javascript" });
+        const blobURL = URL.createObjectURL(blob);
+
+        const module = await import(blobURL);
+        Object.assign(importProxy, module);
+        importProxy.onReady();
+
+        URL.revokeObjectURL(blobURL);
+    } catch (error) {
+        console.error(`Error importing package ${packageName}:`, error);
+    }
 }
+
+
 
 
 // Helper function to display status messages

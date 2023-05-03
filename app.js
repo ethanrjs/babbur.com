@@ -6,13 +6,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Serve public files
-app.use(express.static(path.join(__dirname, "public")));
-
+app.use(express.static(path.join(__dirname, "public"), { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader("Cache-Control", "no-store, no-cache"); } }));
 
 // Function to search and update package list
 function refreshPackageList() {
     const packagesPath = path.join(__dirname, "packages");
     let packages = fs.existsSync("packages.json") ? JSON.parse(fs.readFileSync("packages.json")) : {};
+
     fs.readdir(packagesPath, (err, folders) => {
         if (err) {
             console.error("Error reading packages directory:", err);
@@ -21,6 +21,7 @@ function refreshPackageList() {
 
         folders.forEach(folder => {
             const packageJsonPath = path.join(packagesPath, folder, "package.json");
+
             fs.readFile(packageJsonPath, (err, data) => {
                 if (err) {
                     console.error(`Error reading package.json in ${folder}:`, err);
@@ -51,12 +52,11 @@ function refreshPackageList() {
     });
 }
 
-
 setInterval(refreshPackageList, 30 * 1000);
 
 const packagesRouter = express.Router();
 
-packagesRouter.get("/:packageName/*", (req, res) => {
+packagesRouter.get("/:packageName/*", async (req, res) => {
     const packageName = req.params.packageName;
     const filePath = req.params[0];
     const fullPath = path.join(__dirname, "packages", packageName, filePath);
@@ -68,7 +68,8 @@ packagesRouter.get("/:packageName/*", (req, res) => {
             return;
         }
 
-        res.sendFile(fullPath);
+        const contents = fs.readFileSync(fullPath, "utf8");
+        res.status(200).send(contents);
     });
 });
 
@@ -94,7 +95,6 @@ app.get("/search", (req, res) => {
     });
 
     res.send(results);
-
 });
 
 app.use((req, res) => {
