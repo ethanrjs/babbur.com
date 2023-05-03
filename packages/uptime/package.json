@@ -1,0 +1,9 @@
+{
+    "name": "uptime",
+    "version": "0.0.2",
+    "description": "how lonmg computer online",
+    "files": [
+        "index.js"
+    ],
+    "author": "Ethix"
+}

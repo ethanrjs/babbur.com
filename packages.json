@@ -16,5 +16,11 @@
     "path": "theme-nord",
     "description": "Nord theme integration for Ethix",
     "author": "Ethix"
+  },
+  "uptime": {
+    "version": "0.0.2",
+    "path": "uptime",
+    "description": "how lonmg computer online",
+    "author": "Ethix"
   }
 }

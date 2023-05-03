@@ -19,6 +19,9 @@ registerCommand("epm", "Ethix Package Manager General Command", (args) => {
         case 'list':
             listPackages();
             break;
+        case 'update':
+            updateAllPackages();
+            break;
         default:
             displayHelp();
     }
@@ -222,6 +225,14 @@ async function searchPackage(query) {
         println(`\t\t${result.description}\n`);
 
     }
+}
+
+async function updateAllPackages() {
+    const packageNames = Object.keys(localStorage);
+    for (const packageName of packageNames) {
+        await installPackage(packageName);
+    }
+    println(`Updated ${packageNames.length} package(s)`.gray);
 }
 
 loadInstalledPackages();

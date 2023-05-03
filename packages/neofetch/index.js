@@ -2,38 +2,52 @@ import { registerCommand } from "src/commands.js";
 import { print, println, color } from "src/terminal.js";
 let loadStartTime = Date.now()
 
+// use kb
+let storagemsg = localStorageSize() / 1000 + "kb out of 5mb used"
+
 registerCommand("neofetch", "Prints a cool ASCII art logo", () => {
-    const logoLines = `                
-────────────────
-─██████████████─
-─██░░░░░░░░░░██─
-─██░░██████████─
-─██░░██─────────
-─██░░██████████─
-─██░░░░░░░░░░██─
-─██░░██████████─
-─██░░██─────────
-─██░░██████████─
-─██░░░░░░░░░░██─
-─██████████████─
-────────────────
+    const logoLines =
+        `.
+          _____          
+         /\\    \\         
+        /::\\    \\        
+       /::::\\    \\       
+      /::::::\\    \\      
+     /:::/\\:::\\    \\     
+    /:::/__\\:::\\    \\    
+   /::::\\   \\:::\\    \\   
+  /::::::\\   \\:::\\    \\  
+ /:::/\\:::\\   \\:::\\    \\ 
+/:::/__\\:::\\   \\:::\\____\\
+\\:::\\   \\:::\\   \\::/    /
+ \\:::\\   \\:::\\   \\/____/ 
+  \\:::\\   \\:::\\    \\     
+   \\:::\\   \\:::\\____\\    
+    \\:::\\   \\::/    /    
+     \\:::\\   \\/____/     
+      \\:::\\    \\         
+       \\:::\\____\\        
+        \\::/    /        
+         \\/____/         
+                         
+
+
 `.trim().split('\n').map(line => line.green);
 
     const sideLines = `
 root@ethix
 ----------
-${"OS".greenBright}: ${"ETHIX".white},
-${"Kernel".greenBright}: ${"Ethix".white},
-${"Uptime".greenBright}: ${Date.now() - loadStartTime}ms,
-${"Agent".greenBright}: ${navigator.userAgent.white},
-${"Shell".greenBright}: ${"Ethix".white},
-${"Resolution".greenBright}: ${"1920x1080".white},
-${"DE".greenBright}: ${"Ethix".white},
-${"WM".greenBright}: ${"Ethix".white},
-${"WM Theme".greenBright}: ${"Ethix".white},
-${"Icons".greenBright}: ${"Ethix".white},
-${"Terminal".greenBright}: ${"Ethix".white},
-${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight},
+${"OS".greenBright}: ${"Ethix".white}
+${"Kernel".greenBright}: ${"Ethix".white}
+${"Uptime".greenBright}: ${Date.now() - loadStartTime}ms
+${"Agent".greenBright}: ${navigator.userAgent.white}
+${"Shell".greenBright}: ${"Ethix".white}
+${"DE".greenBright}: ${"Ethix".white}
+${"WM".greenBright}: ${"Ethix".white}
+${"WM Theme".greenBright}: ${"Ethix".white}
+${"Icons".greenBright}: ${"Ethix".white}
+${"Terminal".greenBright}: ${"Ethix".white}
+${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight}
 `.trim().split('\n').map(line => line.white);
 
     const maxLength = Math.max(...logoLines.map(line => line.length)) + 8;
@@ -59,16 +73,34 @@ ${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight},
     //     // choose to suffer through writing. 
     // }, '');
 
-    const colors = ["", 'red', 'redBright', 'yellow', 'yellowBright', 'green', 'greenBright', 'blue', 'blueBright',
-        'magenta', 'magentaBright', 'cyan', 'cyanBright', 'white', 'whiteBright', 'gray', 'black', 'blackBright'];
+    const colors = [
+        "",
+        "bgRed",
+        "bgRedBright",
+        "bgYellow",
+        "bgYellowBright",
+        "bgGreen",
+        "bgGreenBright",
+        "bgBlue",
+        "bgBlueBright",
+        "bgMagenta",
+        "bgMagentaBright",
+        "bgCyan",
+        "bgCyanBright",
+        "bgWhite",
+        "bgWhiteBright",
+        "bgGray",
+        "bgBlack",
+        "bgBlackBright",
+    ];
     // literally no fucking clue why entering a space at2 653ytyhetyy65365y365y65eyt
 
     // rewrite to work with array
     const colorLine = colors.reduce((acc, colorName) => {
-        return acc + "███"[colorName];
+        return acc + "   "[colorName];
     });
 
-    const colorPadding = ' '.repeat(maxLength - 37);
+    const colorPadding = ' '.repeat(maxLength - 43);
     result += colorPadding + colorLine;
 
     return result;
