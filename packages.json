@@ -2,16 +2,19 @@
   "snek": {
     "version": "1.0.1",
     "path": "snek",
-    "description": "snek gam"
+    "description": "snek gam",
+    "author": "Ethix"
   },
   "neofetch": {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "path": "neofetch",
-    "description": "A command-line system information tool written in JS"
+    "description": "A command-line system information tool written in JS",
+    "author": "Ethix"
   },
   "theme-nord": {
     "version": "0.0.1",
     "path": "theme-nord",
-    "description": "Nord theme integration for Ethix"
+    "description": "Nord theme integration for Ethix",
+    "author": "Ethix"
   }
 }

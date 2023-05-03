@@ -22,13 +22,18 @@ registerCommand("neofetch", "Prints a cool ASCII art logo", () => {
     const sideLines = `
 root@ethix
 ----------
-OS: ETHIX
-Host: ${navigator.userAgent}
-Kernel: ETHIX
-Uptime: ${Math.floor((Date.now() - loadStartTime) / 1000)} seconds
-Shell: ETHIX
-Resolution: ${window.innerWidth}x${window.innerHeight}
-Terminal Font: JetBrains Mono
+${"OS".greenBright}: ${"ETHIX".white},
+${"Kernel".greenBright}: ${"Ethix".white},
+${"Uptime".greenBright}: ${Date.now() - loadStartTime}ms,
+${"Agent".greenBright}: ${Navigator.userAgent.white},
+${"Shell".greenBright}: ${"Ethix".white},
+${"Resolution".greenBright}: ${"1920x1080".white},
+${"DE".greenBright}: ${"Ethix".white},
+${"WM".greenBright}: ${"Ethix".white},
+${"WM Theme".greenBright}: ${"Ethix".white},
+${"Icons".greenBright}: ${"Ethix".white},
+${"Terminal".greenBright}: ${"Ethix".white},
+${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight},
 `.trim().split('\n').map(line => line.white);
 
     const maxLength = Math.max(...logoLines.map(line => line.length)) + 8;
@@ -39,7 +44,7 @@ Terminal Font: JetBrains Mono
     for (let i = 0; i < paddedLogoLines.length; i++) {
         result += paddedLogoLines[i] + (sideLines[i] || '') + '\n';
     }
-
+    // 
     const colorLine = Object.keys(color).reduce((acc, colorName) => {
         return acc + "███"[colorName];
         // This here, is the ugliest fucking line of code I have written in all 
