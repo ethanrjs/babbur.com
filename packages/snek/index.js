@@ -70,7 +70,7 @@ function draw() {
             if (isFood) {
                 output += "[]".red;
             } else if (isSnake) {
-                output += "[]".green;
+                output += "[]".bgGreen.green;
             } else {
                 output += "~ ".blackBright;
             }
