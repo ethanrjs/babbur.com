@@ -3,8 +3,8 @@ import { registerCommand } from "src/commands.js";
 
 const input = document.getElementById("input");
 const output = document.getElementById("output");
-const width = 8;
-const height = 8;
+const width = 16;
+const height = 16;
 
 let snake;
 let food;
@@ -65,7 +65,7 @@ function draw() {
             const isSnake = snake.some((segment) => segment.x === x && segment.y === y);
 
             if (isFood) {
-                output += "AA".red;
+                output += "[]".red;
             } else if (isSnake) {
                 output += "██".green;
             } else {
@@ -82,6 +82,12 @@ function draw() {
 
 input.addEventListener("keydown", (event) => {
     if (event.key.toUpperCase() === "W" || event.key.toUpperCase() === "A" || event.key.toUpperCase() === "S" || event.key.toUpperCase() === "D") {
+        // dont allow to go directly backwards
+        if (direction === "W" && event.key.toUpperCase() === "S") return;
+        if (direction === "A" && event.key.toUpperCase() === "D") return;
+        if (direction === "S" && event.key.toUpperCase() === "W") return;
+        if (direction === "D" && event.key.toUpperCase() === "A") return;
+
         direction = event.key.toUpperCase();
     } else if (event.key.toUpperCase() === "R" && gameOver) {
         startSnakeGame();

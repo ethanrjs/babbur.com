@@ -24,6 +24,8 @@ async function loadCommands() {
         let json = JSON.parse(imports.innerHTML)
         json.imports[`commands/${command}.js`] = `./commands/${command}.js`
         imports.innerHTML = JSON.stringify(json)
+
+
     }
     try {
         for (const command in loadedCommands) {

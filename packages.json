@@ -1,0 +1,17 @@
+{
+  "snek": {
+    "version": "1.0.1",
+    "path": "snek",
+    "description": "snek gam"
+  },
+  "neofetch": {
+    "version": "1.0.2",
+    "path": "neofetch",
+    "description": "A command-line system information tool written in JS"
+  },
+  "theme-nord": {
+    "version": "0.0.1",
+    "path": "theme-nord",
+    "description": "Nord theme integration for Ethix"
+  }
+}

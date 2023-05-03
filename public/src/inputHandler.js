@@ -57,6 +57,11 @@ input.addEventListener('keydown', async (event) => {
         }
     }
 
-    // scroll into view vertically do not scroll horizontally
+    input.scrollIntoView(false);
+});
 
+input.addEventListener('blur', async () => {
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    input.focus();
 });

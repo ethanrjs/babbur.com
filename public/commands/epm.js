@@ -7,169 +7,142 @@ registerCommand("epm", "Ethix Package Manager General Command", (args) => {
     const arg1 = args[0]?.toLowerCase() || 'help';
 
     switch (arg1) {
-
-        case 'install': {
-            const arg2 = args[1].toLowerCase();
-            if (!arg2) {
-                println("Please specify a package to install".red);
-                break;
-            }
-            installPackage(arg2);
+        case 'install':
+            handleInstall(args);
             break;
-        }
-        case 'remove': {
-            const arg2 = args[1].toLowerCase();
-            if (!arg2) {
-                println("Please specify a package to remove".red);
-                break;
-            }
-            removePackage(arg2);
+        case 'remove':
+            handleRemove(args);
             break;
-        }
-        case 'search': {
-            const arg2 = args[1].toLowerCase();
-            if (!arg2) {
-                println("Please specify a query to search for".red);
-                break;
-            }
-            searchPackage(arg2);
+        case 'search':
+            handleSearch(args);
             break;
-        }
-        case 'list': {
+        case 'list':
             listPackages();
             break;
-        }
-        default: {
-            println("EPM Help".green);
-            println("\tepm install <package> - Install a package");
-            println("\tepm remove <package> - Remove a package");
-            println("\tepm search <query> - Search for a package")
-            println("\tepm list - List all installed packages");
-            println("\tepm help - Show this help");
-            break;
-        }
+        default:
+            displayHelp();
     }
 });
 
-async function installPackage(packageName, isDependency = false) {
-    try {
-        if (!isDependency) {
-            println(`Installing package ${packageName}...`.white);
-            println(`\tFetching package.json...`.gray);
-        } else {
-            println(`\tInstalling dependency ${packageName}...`.white);
-            println(`\t\tFetching package.json...`.gray);
+// Handles the install command
+function handleInstall(args) {
+    const arg2 = args[1].toLowerCase();
+    if (!arg2) {
+        println("Please specify a package to install".red);
+        return;
+    }
+    installPackage(arg2);
+}
+
+// Handles the remove command
+function handleRemove(args) {
+    const arg2 = args[1].toLowerCase();
+    if (!arg2) {
+        println("Please specify a package to remove".red);
+        return;
+    }
+    removePackage(arg2);
+}
+
+// Handles the search command
+function handleSearch(args) {
+    const arg2 = args[1].toLowerCase();
+    if (!arg2) {
+        println("Please specify a query to search for".red);
+        return;
+    }
+    searchPackage(arg2);
+}
+
+// Displays the help information
+function displayHelp() {
+    println("EPM Help".green);
+    println("\tepm install <package> - Install a package");
+    println("\tepm remove <package> - Remove a package");
+    println("\tepm search <query> - Search for a package")
+    println("\tepm list - List all installed packages");
+    println("\tepm help - Show this help");
+}
+
+// Imports and initializes a package
+async function importPackage(packageName, fileName) {
+    const importProxy = new Proxy(
+        {},
+        {
+            get: (target, prop) => {
+                if (prop === "onReady") {
+                    return function () {
+                        if (typeof window[`${packageName}_onReady`] === "function") {
+                            window[`${packageName}_onReady`]();
+                        }
+                    };
+                }
+                return target[prop];
+            },
         }
+    );
+
+    const moduleSpecifier = `/packages/${packageName}/${fileName}`;
+    const module = await import(moduleSpecifier);
+    Object.assign(importProxy, module);
+    importProxy.onReady();
+}
+
+
+// Helper function to display status messages
+function printStatus(message, isDependency = false, isStartup = false) {
+    if (!isStartup) {
+        const prefix = isDependency ? "\t" : "";
+        println(`${prefix}${message}`);
+    }
+}
+
+async function installPackage(packageName, isDependency = false, isStartup = false) {
+    try {
+        const status = (message) => printStatus(message, isDependency, isStartup);
+
+        status(`Installing package ${packageName}...`.white);
+        status(`\tFetching package.json...`.gray);
 
         const packageJson = await fetch(`/packages/${packageName}/package.json`);
         if (!packageJson.ok) {
-            println(`\tError installing package ${packageName}: Does not exist`.red);
+            status(`\tError installing package ${packageName}: Does not exist`.red);
             return;
         }
-        let packageJsonData;
 
+        let packageJsonData;
         try {
             packageJsonData = await packageJson.json();
         } catch (err) {
-            println(`\tError installing package ${packageName}: Invalid package.json`.red);
+            status(`\tError installing package ${packageName}: Invalid package.json`.red);
         }
 
         if (!packageJsonData) return;
+        status(`\tDone`.green);
 
-        if (isDependency) {
-            println(`\t\tDone`.green)
+        const { version, files, dependencies = [] } = packageJsonData;
+
+        const storedPackage = JSON.parse(localStorage.getItem(packageName));
+        if (storedPackage?.version === version) {
+            status(`\tPackage ${packageName} is already installed and up to date`.green);
+            return;
         } else {
-            println(`\tDone`.green)
+            status(`\t${storedPackage ? "Updating" : "Downloading"} package ${packageName}...`.gray);
         }
 
-        const version = packageJsonData.version;
-        const files = packageJsonData.files;
-        const dependencies = packageJsonData.dependencies || [];
-
-        if (packageName in packages) {
-            const storedPackage = JSON.parse(localStorage.getItem(packageName));
-            if (storedPackage.version === version) {
-                if (isDependency) {
-                    println(`\t\tPackage ${packageName} is already installed and up to date`.green);
-                } else {
-                    println(`\tPackage ${packageName} is already installed and up to date`.green);
-                }
-                return;
-            } else {
-                if (isDependency) {
-                    println(`\t\tUpdating package ${packageName}...`.gray);
-                } else {
-                    println(`\tUpdating package ${packageName}...`.gray);
-                }
-            }
-        } else {
-
-            if (isDependency) {
-                println(`\t\tDownloading package ${packageName}...`.gray);
-            } else {
-                println(`\tDownloading package ${packageName}...`.gray);
-            }
-        }
-
-        if (isDependency) {
-            println("\t\tInstalling dependencies...".gray);
-        } else {
-            println("\tInstalling dependencies...".gray);
-        }
-        for (const dependency of dependencies) {
-            await installPackage(dependency, true);
-        }
-        if (isDependency) {
-            println("\t\tDone".green);
-        } else {
-            println("\tDone".green);
-        }
-
+        status("\tInstalling dependencies...".gray);
+        await Promise.all(dependencies.map((dependency) => installPackage(dependency, true)));
+        status("\tDone".green);
 
         for (const file of files) {
-            if (isDependency) {
-                println(`\t\tGetting ${file}...`.gray);
-            } else {
-                println(`\tGetting ${file}...`.gray);
-            }
-            const packageFile = await fetch(`/packages/${packageName}/${file}`);
-            const packageFileData = await packageFile.text();
-
-            const blob = new Blob([packageFileData], { type: "text/javascript" });
-            const url = URL.createObjectURL(blob);
-            const script = document.createElement("script");
-            script.src = url;
-            script.type = "module";
-
-            // add to import map
-            const importMap = document.querySelector("script[type=importmap]");
-            const importMapJson = JSON.parse(importMap.innerHTML);
-            importMapJson.imports[`@${packageName}/${file}`] = url;
-            importMap.innerHTML = JSON.stringify(importMapJson);
-
-            document.head.appendChild(script);
-            if (isDependency) {
-                println(`\t\tDone`.green);
-            } else {
-                println(`\tDone`.green);
-            }
+            status(`\tGetting ${file}...`.gray);
+            await importPackage(packageName, file);
+            status(`\tDone`.green);
         }
 
-        const packageInfo = {
-            version,
-            files,
-            dependencies,
-        };
-
+        const packageInfo = { version, files, dependencies };
         localStorage.setItem(packageName, JSON.stringify(packageInfo));
-        if (isDependency) {
-            println(`\tDependency ${packageName} installed successfully`.green);
-
-        } else {
-            println(`Package ${packageName} installed successfully`.green);
-
-        }
-
+        status(`Package ${packageName} installed successfully`.green);
     } catch (error) {
         println(`Error installing package ${packageName}: ${error}`.red);
     }
@@ -197,13 +170,39 @@ function listPackages() {
         println(`\t${packageName} (${packageInfo.version})`);
     }
 }
-
 async function loadInstalledPackages() {
     const packageNames = Object.keys(localStorage);
+    let packageCount = 0;
     for (const packageName of packageNames) {
-        await installPackage(packageName);
+        const storedPackage = JSON.parse(localStorage.getItem(packageName));
+        if (storedPackage) {
+            const { files } = storedPackage;
+            for (const file of files) {
+                await importPackage(packageName, file);
+            }
+            packageCount++;
+        }
     }
+    println(`Loaded ${packageCount} package(s)`.gray);
 }
 
+
+async function searchPackage(query) {
+    // search package from /search endpoint
+    const searchResults = await fetch(`/search?q=${query}`);
+    const searchResultsJson = await searchResults.json();
+
+    if (searchResultsJson.length === 0) {
+        println(`No packages found for query ${query}`.yellow);
+        return;
+    }
+
+    println(`Search results for query ${query}:`.green);
+    for (const result of searchResultsJson) {
+        println(`\t${result.name.green} (${result.version.gray})`);
+        println(`\t\t${result.description}\n`);
+
+    }
+}
 
 loadInstalledPackages();

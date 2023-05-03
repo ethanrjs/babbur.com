@@ -108,5 +108,7 @@ export function print(message, textColor = 'white', backgroundColor = 'black') {
     prompt.scrollIntoView(false);
 }
 
+// if #input is ever unfocused, refocus
+
 
 export { colorStyles as color }
