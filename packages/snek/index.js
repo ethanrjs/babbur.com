@@ -69,7 +69,7 @@ function draw() {
             } else if (isSnake) {
                 output += "██".green;
             } else {
-                output += "..".gray;
+                output += "□ ".gray;
             }
         }
         output += "\n";
