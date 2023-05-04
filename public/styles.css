@@ -17,23 +17,22 @@ body {
     overflow-y: auto;
     white-space: pre-wrap;
     padding: 10px;
-    font-size: 1.1rem;
+    font-size: 13pt;
+    line-height: 1.2;
 }
 
 #input-line {
     display: flex;
     align-items: center;
     margin-bottom: 2rem;
-}
-
-
-#output {
-    margin-bottom: 5px;
+    line-height: 1.2;
+    font-size: 13pt;
 }
 
 
 #prompt {
-    margin-right: 5px;
+    width: 1.2rem;
+    color: #a0a0a0;
 }
 
 #input {
@@ -43,7 +42,8 @@ body {
     color: #f0f0f0;
     width: 100%;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
+    font-size: 13pt;
+    line-height: 1.2;
 }
 
 #input::selection {

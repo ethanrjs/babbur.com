@@ -1,8 +1,8 @@
 {
-  "snek": {
-    "version": "1.0.1",
-    "path": "snek",
-    "description": "snek gam",
+  "float": {
+    "version": "float",
+    "path": "float",
+    "description": "float: left;",
     "author": "Ethix"
   },
   "neofetch": {
@@ -11,28 +11,28 @@
     "description": "A command-line system information tool written in JS",
     "author": "Ethix"
   },
-  "uptime": {
-    "version": "0.0.2",
-    "path": "uptime",
-    "description": "how lonmg computer online",
-    "author": "Ethix"
-  },
   "print": {
     "version": "1.0.0.0.0.0.0-beta-alpha-public-01-01-1970-7caa2abf",
     "path": "print",
     "description": "super ultra advanced printing function for your ethix terminal",
     "author": "Ethix"
   },
-  "float": {
-    "version": "float",
-    "path": "float",
-    "description": "float: left;",
-    "author": "Ethix"
-  },
   "nord": {
     "version": "1",
     "path": "nord",
     "description": "A port of the Nord theme for Ethix. Also includes the IBM Plex Mono font, because it's cool.",
+    "author": "Ethix"
+  },
+  "uptime": {
+    "version": "0.0.2",
+    "path": "uptime",
+    "description": "how lonmg computer online",
+    "author": "Ethix"
+  },
+  "snek": {
+    "version": "1.0.1",
+    "path": "snek",
+    "description": "snek gam",
     "author": "Ethix"
   }
 }
