@@ -1,11 +1,19 @@
-import { commands } from "./commands.js";
-import { print, println } from "./terminal.js";
+import { processCommands } from "./commandParser.js";
+import { commands } from "src/commands.js"
+
 const input = document.getElementById('input');
+const terminal = document.querySelector('#terminal');
 
 let history = [];
 let historyIndex = 0;
-const terminal = document.querySelector('#terminal');
+const maxHistorySize = 100;
 
+// Call onReady for all commands that have an onReady function
+Object.values(commands).forEach(command => {
+    if (command.onReady) {
+        command.onReady();
+    }
+});
 
 input.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
@@ -17,18 +25,11 @@ input.addEventListener('keydown', async (event) => {
             history.push(command);
             historyIndex = history.length;
 
-            const commandParts = command.split(' ');
-            const commandName = commandParts.shift().trim();
-
-            println(`$ `.gray);
-            print(`${command} `.white);
-
-            if (commands[commandName]) {
-                const result = commands[commandName].action(commandParts);
-                println(result);
-            } else {
-                println(`Command not found: ${commandName}`);
+            if (history.length > maxHistorySize) {
+                history.shift();
             }
+
+            await processCommands(command);
         }
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
@@ -48,7 +49,9 @@ input.addEventListener('keydown', async (event) => {
     } else if (event.key === 'Tab') {
         event.preventDefault();
         const inputValue = input.value.trim();
-        const matchingCommands = Object.keys(commands).filter(cmd => cmd.startsWith(inputValue));
+        const matchingCommands = Object.values(commands)
+            .filter(command => command.name.startsWith(inputValue) || command.aliases.some(alias => alias.startsWith(inputValue)))
+            .map(command => command.name);
 
         if (matchingCommands.length === 1) {
             input.value = matchingCommands[0] + ' ';

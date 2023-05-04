@@ -1,0 +1,9 @@
+{
+    "name": "print",
+    "description": "super ultra advanced printing function for your ethix terminal",
+    "version": "1.0.0.0.0.0.0-beta-alpha-public-01-01-1970-7caa2abf",
+    "author": "Ethix",
+    "files": [
+        "index.js"
+    ]
+}
