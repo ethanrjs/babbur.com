@@ -1,5 +1,5 @@
-import { print, println } from "src/terminal.js";
-import { registerCommand } from "src/commands.js";
+import { print, println } from "ethix:stdio"
+import { registerCommand } from "ethix:commands"
 
 const input = document.getElementById("input");
 const output = document.getElementById("output");

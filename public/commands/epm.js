@@ -1,29 +1,29 @@
-import { registerCommand } from "../src/commands.js";
-import { print, println } from "../src/terminal.js";
+import { registerCommand } from 'ethix:commands'
+import { println } from 'ethix:stdio'
 
 export const packages = {};
 
-registerCommand("epm", "Ethix Package Manager General Command", (args) => {
+registerCommand("epm", "Ethix Package Manager General Command", async (args) => {
     const arg1 = args[0]?.toLowerCase() || 'help';
 
     switch (arg1) {
         case 'install':
-            handleInstall(args);
+            await handleInstall(args);
             break;
         case 'remove':
-            handleRemove(args);
+            await handleRemove(args);
             break;
         case 'search':
-            handleSearch(args);
+            await handleSearch(args);
             break;
         case 'list':
-            listPackages();
+            await listPackages();
             break;
         case 'update':
-            updateAllPackages();
+            await updateAllPackages();
             break;
         case 'seek':
-            seekPackages();
+            await seekPackages();
             break;
         default:
             displayHelp();
@@ -31,7 +31,7 @@ registerCommand("epm", "Ethix Package Manager General Command", (args) => {
 });
 
 // Handles the install command
-function handleInstall(args) {
+async function handleInstall(args) {
     const arg2 = args[1].toLowerCase();
     if (!arg2) {
         println("Please specify a package to install".red);
@@ -41,7 +41,7 @@ function handleInstall(args) {
 }
 
 // Handles the remove command
-function handleRemove(args) {
+async function handleRemove(args) {
     const arg2 = args[1].toLowerCase();
     if (!arg2) {
         println("Please specify a package to remove".red);
@@ -51,7 +51,7 @@ function handleRemove(args) {
 }
 
 // Handles the search command
-function handleSearch(args) {
+async function handleSearch(args) {
     const splicedArgs = args.splice(1);
     if (splicedArgs.length === 0) {
         println("Please specify a query to search for".red);
@@ -61,7 +61,7 @@ function handleSearch(args) {
 }
 
 // Displays the help information
-function displayHelp() {
+async function displayHelp() {
     println("EPM Help".green);
     println("\tepm install <package> - Install a package");
     println("\tepm remove <package> - Remove a package");
@@ -117,7 +117,7 @@ async function importPackage(packageName, fileName) {
 
 
 // Helper function to display status messages
-function printStatus(message, isDependency = false, isStartup = false) {
+async function printStatus(message, isDependency = false, isStartup = false) {
     if (!isStartup) {
         const prefix = isDependency ? "\t" : "";
         println(`${prefix}${message}`);
@@ -185,7 +185,7 @@ async function removePackage(packageName) {
     }
 }
 
-function listPackages() {
+async function listPackages() {
     const packageNames = Object.keys(localStorage);
     if (packageNames.length === 0) {
         println("No packages installed".yellow);
@@ -238,7 +238,7 @@ async function searchPackage(query) {
     }
 }
 
-function seekPackages() {
+async function seekPackages() {
     // get all packages
     searchPackage("@ALL")
 }

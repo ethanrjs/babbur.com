@@ -1,6 +1,6 @@
-import { processCommands } from "./commandParser.js";
-import { commands } from "src/commands.js"
-
+import { processCommands } from "ethix:commandParser";
+import { commands } from "ethix:commands"
+import { print, println } from "ethix:stdio"
 const input = document.getElementById('input');
 const terminal = document.querySelector('#terminal');
 
@@ -9,11 +9,6 @@ let historyIndex = 0;
 const maxHistorySize = 100;
 
 // Call onReady for all commands that have an onReady function
-Object.values(commands).forEach(command => {
-    if (command.onReady) {
-        command.onReady();
-    }
-});
 
 input.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
@@ -49,26 +44,28 @@ input.addEventListener('keydown', async (event) => {
     } else if (event.key === 'Tab') {
         event.preventDefault();
         const inputValue = input.value.trim();
-        const matchingCommands = Object.values(commands)
-            .filter(command => command.name.startsWith(inputValue) || command.aliases.some(alias => alias.startsWith(inputValue)))
-            .map(command => command.name);
-
+        // matchingCommands = first part of the INPUT VALUE matches any command name or alias
+        const matchingCommands = Object.values(commands).filter(command => command.name.startsWith(inputValue.split(' ')[0]) || command.aliases.some(alias => alias.startsWith(inputValue.split(' ')[0])));
         if (matchingCommands.length === 1) {
-            input.value = matchingCommands[0] + ' ';
+            const matchedCommand = matchingCommands[0];
+            // Check if there is a tab completion callback for the command
+            if (matchedCommand.onTabComplete) {
+                const result = matchedCommand.onTabComplete(inputValue, input.value, event);
+
+                if (result instanceof Promise) {
+                    input.value = await result;
+                } else {
+                    input.value = result;
+                }
+            } else {
+                input.value = matchedCommand.name + ' ';
+            }
         } else if (matchingCommands.length > 1) {
-            println(`$ `.gray);
+            println(`$`.gray);
             print(`${inputValue} `.white);
-            println(matchingCommands.join('   ').gray);
+            println(matchingCommands.map(command => command.name).join('   ').gray);
         }
     }
-    terminal.childNodes.forEach(node => {
-        console.log(node.nodeType);
-        if (node.nodeType === Node.TEXT_NODE) {
-            terminal.removeChild(node);
-        }
-    });
-
-    input.scrollIntoView(false);
 });
 
 input.addEventListener('blur', async () => {

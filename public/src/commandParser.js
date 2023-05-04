@@ -1,15 +1,17 @@
-import { commands } from "./commands.js";
-import { print, println } from "./terminal.js";
+import { commands } from "ethix:commands";
+import { print, println } from "ethix:stdio";
 
 async function processCommand(command) {
     const commandParts = command.split(' ');
     const commandName = commandParts.shift().trim();
 
-    print(`$ `.gray);
+    const targetCommand = Object.values(commands).find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName));
+
+    println(`$ `.gray);
     print(`${command} `.white);
 
-    if (commands[commandName]) {
-        const result = commands[commandName].action(commandParts);
+    if (targetCommand) {
+        const result = targetCommand.action(commandParts);
 
         if (result instanceof Promise) {
             const asyncResult = await result;

@@ -9,18 +9,21 @@
     <script type="importmap">
             {
                 "imports": {
-                    "src/commands.js": "./src/commands.js",
-                    "src/terminal.js": "./src/terminal.js",
-                    "src/init.js": "./src/init.js"
+                    "ethix:commands": "./src/commands.js",
+                    "ethix:stdio": "./src/stdio.js",
+                    "ethix:commandParser": "./src/commandParser.js",
+                    "ethix:inputHandler": "./src/inputHandler.js",
+                    "ethix:init": "./src/init.js"
                 }
             }
         </script>
+    <script src="./src/stdio.js" type="module"></script>
 
-    <script defer src="src/commands.js" type="module"></script>
-    <script defer src="src/terminal.js" type="module"></script>
-    <script defer src="src/init.js" type="module"></script>
-    <script defer src="src/inputHandler.js" type="module"></script>
-    <script defer src="script.js" type="module"></script>
+    <script src="./src/commands.js" type="module"></script>
+    <script src="./src/commandParser.js" type="module"></script>
+    <script src="./src/inputHandler.js" type="module"></script>
+    <script src="./src/init.js" type="module"></script>
+    <script src="script.js" type="module"></script>
 
 
 </head>

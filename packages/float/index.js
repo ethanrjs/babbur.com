@@ -1,4 +1,3 @@
-import { registerCommand } from "src/commands.js";
 
 function onReady() {
     const allElements = document.querySelectorAll("*");
@@ -9,9 +8,11 @@ function onReady() {
         // get element
         const element = allElements[i];
 
-        // set float to left
         element.style.float = "left";
         element.display = "inline-block";
+        // https://media.tenor.com/7UarUv_Z1QYAAAAC/gunna-fire.gif
+
+
     }
 }
 

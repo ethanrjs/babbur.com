@@ -1,4 +1,4 @@
-import { println, color } from './terminal.js';
+import { println } from 'ethix:stdio';
 
 println(`
 

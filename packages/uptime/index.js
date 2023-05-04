@@ -1,5 +1,5 @@
-import { registerCommand } from "src/commands.js";
-import { println } from "src/terminal.js";
+import { registerCommand } from "ethix:commands"
+import { println } from "ethix:stdio"
 
 // in browser
 const formattedNum = (a) => a.toString().replace('+', '0'.repeat(45) + 'x10^'); // add zeros and exponent symbol

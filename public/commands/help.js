@@ -1,5 +1,5 @@
-import { registerCommand, commands, getCommandHelp } from '../src/commands.js';
-import { print, println } from '../src/terminal.js';
+import { registerCommand, commands, getCommandHelp } from 'ethix:commands';
+import { println } from 'ethix:stdio';
 
 registerCommand('help', 'Displays help for command(s)', (args) => {
 
@@ -29,9 +29,8 @@ registerCommand('help', 'Displays help for command(s)', (args) => {
         return;
     }
 
-
     const helpText = args.map(arg => getCommandHelp(arg)).join('\n\n');
     println(helpText);
 }, {
-    aliases: ['h']
+    aliases: ['h'],
 });

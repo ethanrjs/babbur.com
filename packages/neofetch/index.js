@@ -1,5 +1,4 @@
-import { registerCommand } from "src/commands.js";
-import { print, println, color } from "src/terminal.js";
+import { registerCommand } from "ethix:commands"
 let loadStartTime = Date.now()
 
 

@@ -1,5 +1,3 @@
-import { println, print, color } from "./src/terminal.js";
-import { commands } from "./src/commands.js";
 
 async function loadCommands() {
     const startTime = performance.now();
@@ -24,17 +22,8 @@ async function loadCommands() {
         let json = JSON.parse(imports.innerHTML)
         json.imports[`commands/${command}.js`] = `./commands/${command}.js`
         imports.innerHTML = JSON.stringify(json)
-
-
     }
-    try {
-        for (const command in loadedCommands) {
-            commands[command] = loadedCommands[command];
-        }
-    } catch (e) {
-        println(`DEBUG -- Error: ${e}`);
-    }
+
 }
-
 
 loadCommands();
