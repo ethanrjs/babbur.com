@@ -205,6 +205,7 @@ async function loadInstalledPackages() {
         const storedPackage = JSON.parse(localStorage.getItem(packageName));
         if (storedPackage) {
             const { files } = storedPackage;
+            if (!files) continue;
             for (const file of files) {
                 await importPackage(packageName, file);
             }
