@@ -3,8 +3,10 @@ const path = require("path");
 const fs = require("fs");
 const fastFuzzy = require("fast-fuzzy");
 const app = express();
-const PORT = process.env.PORT || 5000;
 
+
+require('dotenv').config()
+const PORT = process.env.PORT || 5500;
 // Serve public files
 app.use(express.static(path.join(__dirname, "public"), { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader("Cache-Control", "no-store, no-cache"); } }));
 
@@ -119,5 +121,5 @@ app.use((req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Babbur.com is running on port ${PORT}`);
 });

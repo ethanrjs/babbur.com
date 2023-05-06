@@ -8,6 +8,7 @@ async function loadCommands() {
         'rf',
         'help',
         'clear',
+        'fs'
     ]
 
     const commandsToLoad = commands;

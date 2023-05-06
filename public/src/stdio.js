@@ -3,13 +3,22 @@ const colors = ['red', 'redBright', 'yellow', 'yellowBright', 'green', 'greenBri
 
 colors.forEach(color => {
     Object.defineProperty(String.prototype, color, {
-        get() { return `<span class="terminal-color-${color}">${this}</span>`; }
+        get() {
+            const span = document.createElement('span');
+            span.className = `terminal-color-${color}`;
+            span.textContent = this;
+            return span.outerHTML;
+        }
     });
     Object.defineProperty(String.prototype, `bg${color.charAt(0).toUpperCase() + color.slice(1)}`, {
-        get() { return `<span class="terminal-bgColor-${color}">${this}</span>`; }
+        get() {
+            const span = document.createElement('span');
+            span.className = `terminal-bgColor-${color}`;
+            span.textContent = this;
+            return span.outerHTML;
+        }
     });
 });
-
 
 const prompt = document.getElementById('prompt');
 
@@ -36,9 +45,5 @@ export function print(message) {
     output.appendChild(messageSpan);
     prompt.scrollIntoView(false);
 }
-
-// if #input is ever unfocused, refocus
-
-
 
 export { colors as color }
