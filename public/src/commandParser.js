@@ -7,7 +7,8 @@ async function processCommand(command) {
 
     const targetCommand = Object.values(commands).find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName));
 
-    println(`$ `.gray);
+    println("admin".blue);
+    print(" > ".gray);
     print(`${command} `.white);
 
     if (targetCommand) {

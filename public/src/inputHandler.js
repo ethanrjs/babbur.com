@@ -61,7 +61,8 @@ input.addEventListener('keydown', async (event) => {
                 input.value = matchedCommand.name + ' ';
             }
         } else if (matchingCommands.length > 1) {
-            println(`$`.gray);
+            println("admin".blue);
+            print(" > ".gray);
             print(`${inputValue} `.white);
             println(matchingCommands.map(command => command.name).join('   ').gray);
         }

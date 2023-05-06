@@ -35,6 +35,11 @@ body {
     color: #a0a0a0;
 }
 
+#user {
+    margin-right: 0.7rem;
+    color: #3E6FB8;
+}
+
 #input {
     border: none;
     background-color: transparent;
