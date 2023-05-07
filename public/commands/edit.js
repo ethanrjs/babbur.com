@@ -31,15 +31,13 @@ registerCommand('edit', 'Edit a file', async (args) => {
         console.log(error);
     }
 
-    let content;
-    if (file) {
-        content = file;
-    } else {
+    buffer = file !== null ? file : "";
+    if (file === null) {
         createFile(path, "");
-        content = ""; // Set the content to an empty string if the file doesn't exist
     }
 
-    buffer = content;
+
+
     clear();
     openedFileName = path;
 
@@ -186,6 +184,11 @@ function renderEditor() {
     let text = buffer.split('\n');
     let lines = text.length;
 
+    // Remove empty lines at the end
+    while (text.length > 0 && text[text.length - 1] === "") {
+        text.pop();
+    }
+
     // Ensure at least 15 lines
     while (text.length < 15) {
         text.push("");
@@ -215,6 +218,8 @@ function renderEditor() {
 
     for (let i = 0; i < lines; i++) {
         const lineNumber = (i + 1).toString().padStart(longestLineNumber);
+
+        // If the cursor is on this line, draw the cursor
         const lineContent = (i === cursor.y && !commandMode) ? drawCursor(text, longestLineOfText) : text[i].padEnd(longestLineOfText + 1);
 
         output += `|${lineNumber.yellow}|${lineContent} |\n`;
