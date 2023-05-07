@@ -101,7 +101,6 @@ function loadFileSystem() {
 
     if (loadedData) {
         fileSystem = JSON.parse(loadedData);
-        println('File system loaded.'.green);
     }
 }
 
@@ -308,18 +307,33 @@ function listDirectory(path, options) {
 }
 
 // Register the improved ls command
-registerCommand('ls', 'List the contents of a directory', (args) => {
+registerCommand('ls', `List directory contents.`, (args) => {
     try {
         ls(args);
     } catch (error) {
         println(error);
         console.error(error);
     }
-});
+}, {
+    longDescription: `
+    Usage: ls [options] [path]
+    Use -l to display long format.
+    Use -S to sort by size.
+    Use -t to sort by date.
+    Use -R to list subdirectories recursively.
+    Use -c to disable color.`
+});;
 
 export {
     fileSystem,
     createFile,
     updateFile,
     readFile,
+    createDirectory,
+    getDirectory,
+    changeDirectory,
+    deleteEntry,
+    listDirectory,
+    resolvePath,
+
 };

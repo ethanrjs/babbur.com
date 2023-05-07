@@ -5,7 +5,8 @@ async function loadCommands() {
         'epm',
         'rf',
         'help',
-        'clear'
+        'clear',
+        'edit'
     ]
 
     const commandsToLoad = commands;

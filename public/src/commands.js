@@ -25,7 +25,8 @@ export function registerCommand(name, description, action, options = {}) {
         aliases,
         onReady,
         onTabComplete,
-        usage
+        usage,
+        longDescription: null,
     };
 
     commands[name] = commandObj;
@@ -38,7 +39,7 @@ export function registerCommand(name, description, action, options = {}) {
 
 export function getCommandHelp(name) {
     if (commands[name]) {
-        let { description, aliases } = commands[name];
+        let { description, aliases, longDescription } = commands[name];
 
         if (!description) {
             description = `none`;
@@ -49,7 +50,7 @@ export function getCommandHelp(name) {
         }
 
 
-        const helpText = `${"Description".green}: ${description}\n${"Aliases".green}: ${aliases.join(', ')}\n${"Usage".green}: ${commands[name]?.usage?.greenBright || 'none'.gray}`;
+        const helpText = `${"Description".green}: ${longDescription || description}\n${"Aliases".green}: ${aliases.join(', ')}\n${"Usage".green}: ${commands[name]?.usage?.greenBright || 'none'.gray}`;
         return helpText;
     }
     return `Command not found: ${name}`;

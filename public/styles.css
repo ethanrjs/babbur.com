@@ -7,7 +7,7 @@ body {
     color: #f0f0f0;
     overflow-x: hidden;
 
-    cursor: none;
+    cursor: default;
 }
 
 #terminal {
@@ -49,6 +49,8 @@ body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13pt;
     line-height: 1.2;
+    cursor: default;
+
 }
 
 #input::selection {

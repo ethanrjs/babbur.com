@@ -1,6 +1,6 @@
 import { processCommands } from "ethix:commandParser";
 import { commands } from "ethix:commands"
-import { print, println } from "ethix:stdio"
+import { print, println, prompt } from "ethix:stdio"
 const input = document.getElementById('input');
 const terminal = document.querySelector('#terminal');
 
@@ -11,6 +11,8 @@ const maxHistorySize = 100;
 // Call onReady for all commands that have an onReady function
 
 input.addEventListener('keydown', async (event) => {
+    if (!prompt) return;
+
     if (event.key === 'Enter') {
         event.preventDefault();
         const command = input.value.trim();
@@ -70,6 +72,7 @@ input.addEventListener('keydown', async (event) => {
 });
 
 input.addEventListener('blur', async () => {
+    if (!prompt) return;
     await new Promise(resolve => setTimeout(resolve, 10));
 
     input.focus();

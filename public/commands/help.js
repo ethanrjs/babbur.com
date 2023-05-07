@@ -23,7 +23,7 @@ registerCommand('help', 'Displays help for command(s)', (args) => {
         const helpText = sortedCommands.map(([command, commandObj]) => {
             const { description, aliases } = commandObj;
             const aliasText = aliases.length > 0 ? `(${aliases.join(', ')})` : 'no aliases';
-            return `${command.padEnd(longestCommandLen + 10).greenBright} ${aliasText.green} - ${description.gray}`;
+            return `${command.padEnd(longestCommandLen + 10).greenBright} ${aliasText.blackBright} - ${description.gray}`;
         }).join('\n');
         println(helpText);
         return;
