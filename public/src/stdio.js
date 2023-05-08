@@ -10,6 +10,7 @@ colors.forEach(color => {
 });
 const promptElem = document.getElementById('prompt');
 const output = document.getElementById('output');
+const terminal = document.getElementById('terminal');
 
 export let prompt = true;
 
@@ -20,18 +21,18 @@ export function println(message) {
     // add br before
     output.appendChild(document.createElement('br'));
     output.appendChild(messageDiv);
-    promptElem.scrollIntoView(false);
+    terminal.scrollTop = terminal.scrollHeight;
 }
 export function print(message) {
     const messageSpan = document.createElement('span');
     messageSpan.innerHTML = message;
     output.appendChild(messageSpan);
-    promptElem.scrollIntoView(false);
+    terminal.scrollTop = terminal.scrollHeight;
 }
 
 export function clear() {
     output.innerHTML = '';
-    promptElem.scrollIntoView(false);
+    terminal.scrollTop = terminal.scrollHeight;
 }
 
 export function disablePrompt() {
@@ -41,7 +42,7 @@ export function disablePrompt() {
 export function enablePrompt() {
     prompt = true;
     document.getElementById('input').focus();
-    promptElem.scrollIntoView(false);
+    // scroll to bottom of #terminal
 }
 
 export { colors as color }
