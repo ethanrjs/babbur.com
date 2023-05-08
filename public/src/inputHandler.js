@@ -96,10 +96,11 @@ const userElem = document.getElementById('user');
 const promptElem = document.getElementById('prompt');
 const directory = document.getElementById('directory');
 
-function updatePrompt() {
+export function updatePrompt() {
     let lastPartOfCwd = currentDirectory.split('/').pop();
     let promptText = "$";
     userElem.innerText = "admin";
     directory.innerText = `${lastPartOfCwd}/ `;
     promptElem.innerHTML = promptText;
-} 
+}
+

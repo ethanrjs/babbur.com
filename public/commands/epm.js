@@ -5,7 +5,7 @@ import { createFile, createDirectory, readFile, resolvePath, currentDirectory } 
 export const packages = {};
 
 registerCommand("epm", "Ethix Package Manager General Command", async (args) => {
-    const arg1 = args[0]?.toLowerCase() || 'help';
+    const arg1 = args[0]?.toLowerCase() || '';
 
     switch (arg1) {
         case 'install':

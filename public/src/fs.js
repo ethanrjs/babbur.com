@@ -1,8 +1,16 @@
 import { registerCommand } from 'ethix:commands';
 import { println } from 'ethix:stdio';
+import { updatePrompt } from "ethix:inputHandler";
 
 let fileSystem = {};
 export let currentDirectory = '/';
+
+
+// on page load, set the current directory to the cwd
+window.addEventListener('load', () => {
+    currentDirectory = localStorage.getItem('cwd') || '/';
+    updatePrompt()
+});
 
 function getDirectory(path) {
     const pathParts = path.split('/');
@@ -87,6 +95,7 @@ function changeDirectory(path) {
 
     if (directory) {
         currentDirectory = path;
+        localStorage.setItem('cwd', currentDirectory);
     } else {
         println(`Directory not found: ${path}`);
     }
@@ -139,7 +148,9 @@ function cat(args) {
 
 function cd(args) {
     if (args.length === 0) {
-        throw new FileSystemError('Usage: fs cd <directory>');
+        currentDirectory = '/';
+        localStorage.setItem('cwd', currentDirectory);
+        return;
     }
     console.log(args)
 
