@@ -1,1 +1,5 @@
 node_modules
+
+# packages and packages.json will be ignored so that they are managed separately via ftp or something
+packages/
+packages.json

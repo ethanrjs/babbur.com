@@ -8,7 +8,6 @@ colors.forEach(color => {
         get() { return `<span class="terminal-bgColor-${color}">${this}</span>`; }
     });
 });
-const promptElem = document.getElementById('prompt');
 const output = document.getElementById('output');
 const terminal = document.getElementById('terminal');
 
