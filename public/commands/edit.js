@@ -8,6 +8,11 @@ let cursor = {
     x: 0,
     y: 0
 }
+let cursorPosOther = {
+    x: 0,
+    y: 0
+}
+
 let openedFileName = "";
 let commandMode = false;
 let command = "";
@@ -19,7 +24,6 @@ registerCommand('edit', 'Edit a file', async (args) => {
     }
 
     disablePrompt()
-    editorOpen = true;
 
     const path = resolvePath(args[0]);
     let file;
@@ -36,16 +40,20 @@ registerCommand('edit', 'Edit a file', async (args) => {
         createFile(path, "");
     }
 
-
-
     clear();
     openedFileName = path;
+
+    // sleep 10ms because the first keypress is being registered causing a newline in files
+    await new Promise(resolve => setTimeout(resolve, 10));
+    editorOpen = true;
+    renderEditor();
 
 });
 
 // Step 1: Function to draw the cursor at the current position
 function drawCursor(text, longestLineOfText) {
-    let line = text[cursor.y];
+    if (commandMode) return;
+    let line = text[cursor.y] || " ";
     let beforeCursor = line.slice(0, cursor.x);
     let afterCursor = line.slice(cursor.x);
 
@@ -62,10 +70,14 @@ function handleCommand(command) {
     } else if (command === "q") {
         editorOpen = false;
         buffer = "";
-        cursor = {
-            x: 0,
-            y: 0
-        }
+
+        let current = { x: cursor.x, y: cursor.y };
+        cursor.x = cursorPosOther.x;
+        cursor.y = cursorPosOther.y;
+
+        cursorPosOther.x = current.x;
+        cursorPosOther.y = current.y;
+
         openedFileName = "";
         commandMode = false;
         command = "";
@@ -76,10 +88,14 @@ function handleCommand(command) {
         createFile(openedFileName, buffer);
         editorOpen = false;
         buffer = "";
-        cursor = {
-            x: 0,
-            y: 0
-        }
+
+        let current = { x: cursor.x, y: cursor.y };
+        cursor.x = cursorPosOther.x;
+        cursor.y = cursorPosOther.y;
+
+        cursorPosOther.x = current.x;
+        cursorPosOther.y = current.y;
+
         openedFileName = "";
         commandMode = false;
         command = "";
@@ -88,6 +104,7 @@ function handleCommand(command) {
         clear();
     }
 }
+
 
 function handleInput(e) {
     if (!editorOpen) return;
@@ -98,10 +115,26 @@ function handleInput(e) {
             handleCommand(command);
 
             command = '';
+            cursor.x = 0;
         } else if (e.key === 'Backspace') {
             command = command.slice(0, -1);
+            if (cursor.x > 0) cursor.x--;
         } else if (e.key.length === 1) {
             command += e.key;
+            cursor.x++;
+        } else if (e.key === 'Escape') {
+            commandMode = false;
+            command = '';
+
+            // swap cursor positions
+            let current = { x: cursor.x, y: cursor.y };
+            cursor.x = cursorPosOther.x;
+            cursor.y = cursorPosOther.y;
+
+            cursorPosOther.x = current.x;
+            cursorPosOther.y = current.y;
+
+
         }
         renderEditor();
         return;
@@ -109,8 +142,10 @@ function handleInput(e) {
 
     if (e.key.length === 1) { // For printable characters
         const lines = buffer.split('\n');
+        if (!lines[cursor.y]) lines[cursor.y] = "";
         lines[cursor.y] = lines[cursor.y].slice(0, cursor.x) + e.key + lines[cursor.y].slice(cursor.x);
         buffer = lines.join('\n');
+
         cursor.x++;
     } else { // For non-printable characters (arrow keys, backspace, etc.)
         switch (e.key) {
@@ -141,12 +176,16 @@ function handleInput(e) {
                 break;
             case 'Enter':
                 const lines2 = buffer.split('\n');
-                lines2[cursor.y] = lines2[cursor.y].slice(0, cursor.x);
-                lines2.splice(cursor.y + 1, 0, lines2[cursor.y].slice(cursor.x));
+                const currentLineContent = lines2[cursor.y];
+                const beforeCursorContent = currentLineContent.slice(0, cursor.x);
+                const afterCursorContent = currentLineContent.slice(cursor.x);
+                lines2[cursor.y] = beforeCursorContent;
+                lines2.splice(cursor.y + 1, 0, afterCursorContent);
                 buffer = lines2.join('\n');
                 cursor.y++;
                 cursor.x = 0;
                 break;
+
             case 'Tab':
                 const lines3 = buffer.split('\n');
                 lines3[cursor.y] = lines3[cursor.y].slice(0, cursor.x) + "    " + lines3[cursor.y].slice(cursor.x);
@@ -155,6 +194,12 @@ function handleInput(e) {
                 break;
             case 'Escape':
                 commandMode = !commandMode;
+                let current = { x: cursor.x, y: cursor.y };
+                cursor.x = cursorPosOther.x;
+                cursor.y = cursorPosOther.y;
+
+                cursorPosOther.x = current.x;
+                cursorPosOther.y = current.y;
                 break;
             case 'Delete':
                 const lines4 = buffer.split('\n');
@@ -189,11 +234,6 @@ function renderEditor() {
         text.pop();
     }
 
-    // Ensure at least 15 lines
-    while (text.length < 15) {
-        text.push("");
-    }
-
     let longestLineOfText = Math.max(90, ...text.map(line => line.length));
     let longestLineNumber = Math.max(6, String(lines).length);
 
@@ -220,6 +260,7 @@ function renderEditor() {
         const lineNumber = (i + 1).toString().padStart(longestLineNumber);
 
         // If the cursor is on this line, draw the cursor
+        if (!text[i]) text[i] = "";
         const lineContent = (i === cursor.y && !commandMode) ? drawCursor(text, longestLineOfText) : text[i].padEnd(longestLineOfText + 1);
 
         output += `|${lineNumber.yellow}|${lineContent} |\n`;
@@ -229,11 +270,15 @@ function renderEditor() {
     output += bottomLine;
 
     const commandLineContent = commandMode ? command.slice(0, cursor.x) + '█' + command.slice(cursor.x) : command;
-    const commandLine = `|${" ".repeat(longestLineNumber)}>${commandLineContent}${" ".repeat(longestLineOfText + 2 - commandLineContent.length)}|\n`;
+    const commandLine = `|${" ".repeat(longestLineNumber)}:${commandLineContent}${" ".repeat(longestLineOfText + 2 - commandLineContent.length)}\n`;
     output += commandLine;
 
     const bottomBar = generateLine("+", "+");
     output += bottomBar;
+
+    output += `Mode:\t${commandMode ? "EXEC".green : "EDIT".greenBright}\n`;
+    output += `Pos: \t${cursor.x.toString().padStart(3)}, ${cursor.y.toString().padStart(3)}\n`;
+    output += `(Press ${"ESC".blue} to ${commandMode ? "exit".green : "enter".greenBright} command mode)\n`;
 
     print(output);
 }

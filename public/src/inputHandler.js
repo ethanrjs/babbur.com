@@ -1,9 +1,10 @@
 import { processCommands } from "ethix:commandParser";
 import { commands } from "ethix:commands"
 import { print, println, prompt } from "ethix:stdio"
+import { currentDirectory } from "ethix:fs";
 const input = document.getElementById('input');
 const terminal = document.querySelector('#terminal');
-
+const inputLine = document.querySelector('#input-line');
 let history = [];
 let historyIndex = 0;
 const maxHistorySize = 100;
@@ -12,6 +13,7 @@ const maxHistorySize = 100;
 
 input.addEventListener('keydown', async (event) => {
     if (!prompt) return;
+
 
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -63,12 +65,17 @@ input.addEventListener('keydown', async (event) => {
                 input.value = matchedCommand.name + ' ';
             }
         } else if (matchingCommands.length > 1) {
-            println("admin".blue);
-            print(" > ".gray);
+            let lastPartOfCwd = currentDirectory.split('/').pop();
+            println("admin".redBright);
+            print(` ${lastPartOfCwd}/`.blue);
+            print(" $ ".white);
             print(`${inputValue} `.white);
             println(matchingCommands.map(command => command.name).join('   ').gray);
         }
     }
+
+    updatePrompt()
+
 });
 
 input.addEventListener('blur', async () => {
@@ -84,3 +91,15 @@ terminal.childNodes.forEach(node => {
         terminal.removeChild(node);
     }
 }); // dont know why i need this but it works
+
+const userElem = document.getElementById('user');
+const promptElem = document.getElementById('prompt');
+const directory = document.getElementById('directory');
+
+function updatePrompt() {
+    let lastPartOfCwd = currentDirectory.split('/').pop();
+    let promptText = "$";
+    userElem.innerText = "admin";
+    directory.innerText = `${lastPartOfCwd}/ `;
+    promptElem.innerHTML = promptText;
+} 

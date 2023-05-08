@@ -22,21 +22,33 @@ body {
 }
 
 #input-line {
-    display: flex;
-    align-items: center;
     margin-bottom: 2rem;
     line-height: 1.2;
     font-size: 13pt;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    
 }
 
+#input-line > * {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
 
 #prompt {
     width: 1.2rem;
-    color: #a0a0a0;
+    display: grid;
+    place-items: center;
 }
 
 #user {
     margin-right: 0.7rem;
+    color: #EA6565;
+}
+
+#directory {
     color: #3E6FB8;
 }
 

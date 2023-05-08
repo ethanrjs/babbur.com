@@ -1,5 +1,6 @@
 import { commands } from "ethix:commands";
 import { print, println } from "ethix:stdio";
+import { currentDirectory } from "ethix:fs";
 
 async function processCommand(command) {
     const commandParts = command.split(' ');
@@ -7,8 +8,10 @@ async function processCommand(command) {
 
     const targetCommand = Object.values(commands).find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName));
 
-    println("admin".blue);
-    print(" > ".gray);
+    let lastPartOfCwd = currentDirectory.split('/').pop();
+    println("admin".redBright);
+    print(` ${lastPartOfCwd}/`.blue);
+    print(" $ ".white);
     print(`${command} `.white);
 
     if (targetCommand) {

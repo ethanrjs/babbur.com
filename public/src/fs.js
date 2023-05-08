@@ -2,7 +2,7 @@ import { registerCommand } from 'ethix:commands';
 import { println } from 'ethix:stdio';
 
 let fileSystem = {};
-let currentDirectory = '/';
+export let currentDirectory = '/';
 
 function getDirectory(path) {
     const pathParts = path.split('/');

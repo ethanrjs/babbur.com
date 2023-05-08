@@ -1,5 +1,6 @@
 import { registerCommand } from 'ethix:commands'
 import { println } from 'ethix:stdio'
+import { createFile, createDirectory, readFile, resolvePath, currentDirectory } from 'ethix:fs';
 
 export const packages = {};
 
@@ -24,6 +25,9 @@ registerCommand("epm", "Ethix Package Manager General Command", async (args) => 
             break;
         case 'seek':
             await seekPackages();
+            break;
+        case 'create':
+            await createPackage(args[1]);
             break;
         default:
             displayHelp();
@@ -63,13 +67,14 @@ async function handleSearch(args) {
 // Displays the help information
 async function displayHelp() {
     println("EPM Help".green);
-    println("\tepm install <package> - Install a package");
-    println("\tepm remove <package> - Remove a package");
-    println("\tepm search <query> - Search for a package")
+    println("\tepm install (package) - Install a package");
+    println("\tepm remove (package) - Remove a package");
+    println("\tepm search (query) - Search for a package")
     println("\tepm list - List all installed packages");
     println("\tepm update - Update all installed packages");
     println("\tepm seek - Seek all packages in repository");
     println("\tepm help - Show this help");
+    println("\tepm create (name) - Create a new package");
 }
 
 // Imports and initializes a package
@@ -250,6 +255,27 @@ async function updateAllPackages() {
         await installPackage(packageName);
     }
     println(`Updated ${packageNames.length} package(s)`.gray);
+}
+
+async function createPackage(packageName) {
+    if (!packageName) {
+        println("Please specify a package name".red);
+        return;
+    }
+
+    const packageJson = {
+        name: packageName,
+        version: "1.0.0",
+        description: "My custom package",
+        files: ["index.js"],
+        dependencies: [],
+    }
+
+    const packageJsonString = JSON.stringify(packageJson, null, 4);
+    await createDirectory(currentDirectory + packageName);
+    await createFile(currentDirectory + packageName + "/package.json", packageJsonString);
+    await createFile(currentDirectory + packageName + "/index.js", "");
+    println(`Package ${packageName} created successfully`.green);
 }
 
 loadInstalledPackages();
