@@ -154,7 +154,8 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         const { version, files, dependencies = [] } = packageJsonData;
 
-        const storedPackage = JSON.parse(localStorage.getItem(packages)[packageName] || "{}") || {};
+        let packages = localStorage.getItem("packages");
+        const storedPackage = packages[packageName] ? JSON.parse(packages[packageName]) : null;
         if (storedPackage?.version === version) {
             status(`\tPackage ${packageName} is already installed and up to date`.green);
             return;
@@ -173,15 +174,17 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         }
 
         const packageInfo = { version, files, dependencies };
-        localStorage.setItem(packages)[packageName] = JSON.stringify(packageInfo);
+        localStorage.setItem(packages[packageName], JSON.stringify(packageInfo));
         status(`Package ${packageName} installed successfully`.green);
     } catch (error) {
-        println(`Error installing package ${packageName}: ${error}`.red);
+        println(`Error installing package. Check console for details`.red);
+        console.error(error);
     }
 }
 
 async function removePackage(packageName) {
-    if (localStorage.getItem(packages)[packageName]) {
+    let packages = localStorage.getItem("packages");
+    if (packages[packageName]) {
         localStorage.removeItem(packages)[packageName];
         println(`Package ${packageName} removed successfully`.green);
         println(`Some packages require you to refresh the page to be fully removed`.yellow)
@@ -199,11 +202,23 @@ async function listPackages() {
 
     println("Installed packages:".green);
     for (const packageName of packageNames) {
-        const packageInfo = JSON.parse(localStorage.getItem("packages")[packageName]);
+        let packageInfo, packages;
+        try {
+            packages = JSON.parse(localStorage.getItem("packages"));
+            packageInfo = packages[packageName];
+
+            if (!packageInfo) throw new Error(`Package ${packageName} is not installed`);
+        } catch (err) {
+            localStorage.setItem("packages", JSON.stringify({}));
+            continue;
+        }
         println(`\t${packageName} (${packageInfo.version})`);
     }
 }
 async function loadInstalledPackages() {
+
+    if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify({}));
+
     const packageNames = Object.keys(localStorage.getItem("packages") || {});
     let packageCount = 0;
     for (const packageName of packageNames) {
