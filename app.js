@@ -47,12 +47,6 @@ async function refreshPackageList() {
     }
 }
 
-// GET /version
-// get package.json version
-// if on port 5500 append -dev
-
-
-
 setInterval(refreshPackageList, REFRESH_INTERVAL);
 
 app.use("/packages", packagesRouter);

@@ -154,7 +154,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         const { version, files, dependencies = [] } = packageJsonData;
 
-        const storedPackage = JSON.parse(localStorage.getItem(packageName));
+        const storedPackage = JSON.parse(localStorage.getItem(packages)[packageName] || "{}") || {};
         if (storedPackage?.version === version) {
             status(`\tPackage ${packageName} is already installed and up to date`.green);
             return;
@@ -173,7 +173,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         }
 
         const packageInfo = { version, files, dependencies };
-        localStorage.setItem(packageName, JSON.stringify(packageInfo));
+        localStorage.setItem(packages)[packageName] = JSON.stringify(packageInfo);
         status(`Package ${packageName} installed successfully`.green);
     } catch (error) {
         println(`Error installing package ${packageName}: ${error}`.red);
@@ -181,8 +181,8 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 }
 
 async function removePackage(packageName) {
-    if (localStorage.getItem(packageName)) {
-        localStorage.removeItem(packageName);
+    if (localStorage.getItem(packages)[packageName]) {
+        localStorage.removeItem(packages)[packageName];
         println(`Package ${packageName} removed successfully`.green);
         println(`Some packages require you to refresh the page to be fully removed`.yellow)
     } else {
@@ -191,7 +191,7 @@ async function removePackage(packageName) {
 }
 
 async function listPackages() {
-    const packageNames = Object.keys(localStorage);
+    const packageNames = Object.keys(localStorage.getItem("packages"));
     if (packageNames.length === 0) {
         println("No packages installed".yellow);
         return;
@@ -199,15 +199,21 @@ async function listPackages() {
 
     println("Installed packages:".green);
     for (const packageName of packageNames) {
-        const packageInfo = JSON.parse(localStorage.getItem(packageName));
+        const packageInfo = JSON.parse(localStorage.getItem("packages")[packageName]);
         println(`\t${packageName} (${packageInfo.version})`);
     }
 }
 async function loadInstalledPackages() {
-    const packageNames = Object.keys(localStorage);
+    const packageNames = Object.keys(localStorage.getItem("packages") || {});
     let packageCount = 0;
     for (const packageName of packageNames) {
-        const storedPackage = JSON.parse(localStorage.getItem(packageName));
+        let storedPackage;
+        try {
+            storedPackage = JSON.parse(localStorage.getItem("packages")[packageName]);
+        } catch (err) {
+            localStorage.setItem("packages", JSON.stringify({}));
+            continue;
+        }
         if (storedPackage) {
             const { files } = storedPackage;
             if (!files) continue;
@@ -250,7 +256,7 @@ async function seekPackages() {
 }
 
 async function updateAllPackages() {
-    const packageNames = Object.keys(localStorage);
+    const packageNames = Object.keys(localStorage.getItem("packages"));
     for (const packageName of packageNames) {
         await installPackage(packageName);
     }
