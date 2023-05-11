@@ -1,14 +1,12 @@
 
 async function loadCommands() {
-    const startTime = performance.now();
-
     // Built-in commands
     const commands = [
         'epm',
         'rf',
         'help',
         'clear',
-        'fs'
+        'edit'
     ]
 
     const commandsToLoad = commands;

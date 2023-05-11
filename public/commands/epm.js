@@ -1,10 +1,11 @@
 import { registerCommand } from 'ethix:commands'
 import { println } from 'ethix:stdio'
+import { createFile, createDirectory, readFile, resolvePath, currentDirectory } from 'ethix:fs';
 
 export const packages = {};
 
 registerCommand("epm", "Ethix Package Manager General Command", async (args) => {
-    const arg1 = args[0]?.toLowerCase() || 'help';
+    const arg1 = args[0]?.toLowerCase() || '';
 
     switch (arg1) {
         case 'install':
@@ -24,6 +25,9 @@ registerCommand("epm", "Ethix Package Manager General Command", async (args) => 
             break;
         case 'seek':
             await seekPackages();
+            break;
+        case 'create':
+            await createPackage(args[1]);
             break;
         default:
             displayHelp();
@@ -63,13 +67,14 @@ async function handleSearch(args) {
 // Displays the help information
 async function displayHelp() {
     println("EPM Help".green);
-    println("\tepm install <package> - Install a package");
-    println("\tepm remove <package> - Remove a package");
-    println("\tepm search <query> - Search for a package")
+    println("\tepm install (package) - Install a package");
+    println("\tepm remove (package) - Remove a package");
+    println("\tepm search (query) - Search for a package")
     println("\tepm list - List all installed packages");
     println("\tepm update - Update all installed packages");
     println("\tepm seek - Seek all packages in repository");
     println("\tepm help - Show this help");
+    println("\tepm create (name) - Create a new package");
 }
 
 // Imports and initializes a package
@@ -149,7 +154,8 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         const { version, files, dependencies = [] } = packageJsonData;
 
-        const storedPackage = JSON.parse(localStorage.getItem(packageName));
+        let packages = localStorage.getItem("packages");
+        const storedPackage = packages[packageName] ? JSON.parse(packages[packageName]) : null;
         if (storedPackage?.version === version) {
             status(`\tPackage ${packageName} is already installed and up to date`.green);
             return;
@@ -168,16 +174,18 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         }
 
         const packageInfo = { version, files, dependencies };
-        localStorage.setItem(packageName, JSON.stringify(packageInfo));
+        localStorage.setItem(packages[packageName], JSON.stringify(packageInfo));
         status(`Package ${packageName} installed successfully`.green);
     } catch (error) {
-        println(`Error installing package ${packageName}: ${error}`.red);
+        println(`Error installing package. Check console for details`.red);
+        console.error(error);
     }
 }
 
 async function removePackage(packageName) {
-    if (localStorage.getItem(packageName)) {
-        localStorage.removeItem(packageName);
+    let packages = localStorage.getItem("packages");
+    if (packages[packageName]) {
+        localStorage.removeItem(packages)[packageName];
         println(`Package ${packageName} removed successfully`.green);
         println(`Some packages require you to refresh the page to be fully removed`.yellow)
     } else {
@@ -186,7 +194,7 @@ async function removePackage(packageName) {
 }
 
 async function listPackages() {
-    const packageNames = Object.keys(localStorage);
+    const packageNames = Object.keys(localStorage.getItem("packages"));
     if (packageNames.length === 0) {
         println("No packages installed".yellow);
         return;
@@ -194,17 +202,36 @@ async function listPackages() {
 
     println("Installed packages:".green);
     for (const packageName of packageNames) {
-        const packageInfo = JSON.parse(localStorage.getItem(packageName));
+        let packageInfo, packages;
+        try {
+            packages = JSON.parse(localStorage.getItem("packages"));
+            packageInfo = packages[packageName];
+
+            if (!packageInfo) throw new Error(`Package ${packageName} is not installed`);
+        } catch (err) {
+            localStorage.setItem("packages", JSON.stringify({}));
+            continue;
+        }
         println(`\t${packageName} (${packageInfo.version})`);
     }
 }
 async function loadInstalledPackages() {
-    const packageNames = Object.keys(localStorage);
+
+    if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify({}));
+
+    const packageNames = Object.keys(localStorage.getItem("packages") || {});
     let packageCount = 0;
     for (const packageName of packageNames) {
-        const storedPackage = JSON.parse(localStorage.getItem(packageName));
+        let storedPackage;
+        try {
+            storedPackage = JSON.parse(localStorage.getItem("packages")[packageName]);
+        } catch (err) {
+            localStorage.setItem("packages", JSON.stringify({}));
+            continue;
+        }
         if (storedPackage) {
             const { files } = storedPackage;
+            if (!files) continue;
             for (const file of files) {
                 await importPackage(packageName, file);
             }
@@ -244,11 +271,32 @@ async function seekPackages() {
 }
 
 async function updateAllPackages() {
-    const packageNames = Object.keys(localStorage);
+    const packageNames = Object.keys(localStorage.getItem("packages"));
     for (const packageName of packageNames) {
         await installPackage(packageName);
     }
     println(`Updated ${packageNames.length} package(s)`.gray);
+}
+
+async function createPackage(packageName) {
+    if (!packageName) {
+        println("Please specify a package name".red);
+        return;
+    }
+
+    const packageJson = {
+        name: packageName,
+        version: "1.0.0",
+        description: "My custom package",
+        files: ["index.js"],
+        dependencies: [],
+    }
+
+    const packageJsonString = JSON.stringify(packageJson, null, 4);
+    await createDirectory(currentDirectory + packageName);
+    await createFile(currentDirectory + packageName + "/package.json", packageJsonString);
+    await createFile(currentDirectory + packageName + "/index.js", "");
+    println(`Package ${packageName} created successfully`.green);
 }
 
 loadInstalledPackages();

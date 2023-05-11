@@ -1,8 +1,16 @@
 import { registerCommand } from 'ethix:commands';
 import { println } from 'ethix:stdio';
+import { updatePrompt } from "ethix:inputHandler";
 
 let fileSystem = {};
-let currentDirectory = '/';
+export let currentDirectory = '/';
+
+
+// on page load, set the current directory to the cwd
+window.addEventListener('load', () => {
+    currentDirectory = localStorage.getItem('cwd') || '/';
+    updatePrompt()
+});
 
 function getDirectory(path) {
     const pathParts = path.split('/');
@@ -87,6 +95,7 @@ function changeDirectory(path) {
 
     if (directory) {
         currentDirectory = path;
+        localStorage.setItem('cwd', currentDirectory);
     } else {
         println(`Directory not found: ${path}`);
     }
@@ -101,7 +110,6 @@ function loadFileSystem() {
 
     if (loadedData) {
         fileSystem = JSON.parse(loadedData);
-        println('File system loaded.'.green);
     }
 }
 
@@ -140,7 +148,9 @@ function cat(args) {
 
 function cd(args) {
     if (args.length === 0) {
-        throw new FileSystemError('Usage: fs cd <directory>');
+        currentDirectory = '/';
+        localStorage.setItem('cwd', currentDirectory);
+        return;
     }
     console.log(args)
 
@@ -308,18 +318,33 @@ function listDirectory(path, options) {
 }
 
 // Register the improved ls command
-registerCommand('ls', 'List the contents of a directory', (args) => {
+registerCommand('ls', `List directory contents.`, (args) => {
     try {
         ls(args);
     } catch (error) {
         println(error);
         console.error(error);
     }
-});
+}, {
+    longDescription: `
+    Usage: ls [options] [path]
+    Use -l to display long format.
+    Use -S to sort by size.
+    Use -t to sort by date.
+    Use -R to list subdirectories recursively.
+    Use -c to disable color.`
+});;
 
 export {
     fileSystem,
     createFile,
     updateFile,
     readFile,
+    createDirectory,
+    getDirectory,
+    changeDirectory,
+    deleteEntry,
+    listDirectory,
+    resolvePath,
+
 };
