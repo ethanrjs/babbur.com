@@ -18,7 +18,6 @@ app.use(serveStatic(path.join(__dirname, "public"), { etag: false, lastModified:
 async function refreshPackageList() {
     try {
         const packagesPath = path.join(__dirname, "packages");
-        const packages = JSON.parse(await fs.readFile("packages.json")) || {};
 
         const folders = await fs.readdir(packagesPath);
 
