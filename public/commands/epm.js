@@ -80,15 +80,17 @@ async function displayHelp() {
 // Imports and initializes a package
 // Imports and initializes a package
 // Imports and initializes a package
-async function importPackage(packageName, fileName) {
+async function importPackage(packageNames, fileNames) {
     const importProxy = new Proxy(
         {},
         {
             get: (target, prop) => {
                 if (prop === "onReady") {
                     return function () {
-                        if (typeof window[`${packageName}_onReady`] === "function") {
-                            window[`${packageName}_onReady`]();
+                        for (const packageName of packageNames) {
+                            if (typeof window[`${packageName}_onReady`] === "function") {
+                                window[`${packageName}_onReady`]();
+                            }
                         }
                     };
                 }
@@ -97,26 +99,33 @@ async function importPackage(packageName, fileName) {
         }
     );
 
-    const moduleSpecifier = `/packages/${packageName}/${fileName}`;
+    const moduleSpecifier = `/packages?packages=${packageNames.join(",")}&files=${fileNames.join(",")}`;
     try {
         const response = await fetch(moduleSpecifier);
         if (!response.ok) {
             throw new Error(`Error fetching ${moduleSpecifier}`);
         }
 
-        const moduleText = await response.text();
-        const blob = new Blob([moduleText], { type: "text/javascript" });
-        const blobURL = URL.createObjectURL(blob);
+        const modules = await response.json();
+        for (const module of modules) {
+            if (module.error) {
+                console.error(`Error importing package ${module.packageName}:`, module.error);
+                continue;
+            }
+            const blob = new Blob([module.contents], { type: "text/javascript" });
+            const blobURL = URL.createObjectURL(blob);
 
-        const module = await import(blobURL);
-        Object.assign(importProxy, module);
-        importProxy.onReady();
+            const importedModule = await import(blobURL);
+            Object.assign(importProxy, importedModule);
+            importProxy.onReady();
 
-        URL.revokeObjectURL(blobURL);
+            URL.revokeObjectURL(blobURL);
+        }
     } catch (error) {
-        console.error(`Error importing package ${packageName}:`, error);
+        console.error(`Error importing packages:`, error);
     }
 }
+
 
 
 
@@ -168,11 +177,9 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         await Promise.all(dependencies.map((dependency) => installPackage(dependency, true)));
         status("\tDone".green);
 
-        for (const file of files) {
-            status(`\tGetting ${file}...`.gray);
-            await importPackage(packageName, file);
-            status(`\tDone`.green);
-        }
+        status(`\tGetting ${files.length} file(s)...`.gray);
+        await importPackage([packageName], files);
+        status(`\tDone`.green);
 
         const packageInfo = { version, files, dependencies };
 
