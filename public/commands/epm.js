@@ -133,6 +133,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
     try {
         const status = (message) => printStatus(message, isDependency, isStartup);
 
+        const START_TIME_MS = Date.now();
         status(`Installing package ${packageName}...`.white);
         status(`\tFetching package.json...`.gray);
 
@@ -178,7 +179,8 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         packages[packageName] = packageInfo;
 
         localStorage.setItem("packages", JSON.stringify(packages));
-        status(`Package ${packageName} installed successfully`.green);
+        const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
+        status(`Package ${packageName} installed successfully`.green + ` (${TIME_TAKEN_MS}ms)`.gray);
     } catch (error) {
         println(`Error installing package. Check console for details`.red);
         console.error(error);
@@ -218,6 +220,7 @@ async function listPackages() {
     }
 }
 async function loadInstalledPackages() {
+    const START_TIME_MS = Date.now();
     if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify({}));
 
     const packages = JSON.parse(localStorage.getItem("packages") || '{}');
@@ -233,7 +236,8 @@ async function loadInstalledPackages() {
             packageCount++;
         }
     }
-    println(`Loaded ${packageCount} package(s)`.gray);
+    const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
+    println(`Loaded ${packageCount} package(s) in ${TIME_TAKEN_MS}ms`.gray);
 }
 
 
