@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require("express");
 const path = require("path");
 const fs = require("fs").promises;
@@ -9,10 +11,10 @@ packagesRouter.get("/:packageName/*", async (req, res) => {
     const fullPath = path.join(__dirname, "../packages", packageName, filePath);
 
     try {
-        await fs.access(fullPath, fs.constants.F_OK);
         const contents = await fs.readFile(fullPath, "utf8");
         res.status(200).send(contents);
     } catch (err) {
+        console.error(err);
         res.status(404).send("File not found");
     }
 });

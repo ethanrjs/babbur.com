@@ -9,6 +9,7 @@
 // file: "index.js",
 // content: "console.log('test')"
 // }
+'use strict';
 
 const express = require("express");
 const path = require("path");

@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require("express");
 const fs = require("fs").promises;
 const fastFuzzy = require("fast-fuzzy");
@@ -10,10 +12,10 @@ searchRouter.get("/search", async (req, res) => {
 
     if (query === "@ALL") {
         for (const key in packages) {
-            const package = packages[key];
-            package.name = key;
+            const packageName = packages[key];
+            packageName.name = key;
 
-            results.push(package);
+            results.push(packageName);
         }
         res.send(results);
         return;

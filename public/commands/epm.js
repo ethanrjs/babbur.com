@@ -36,7 +36,7 @@ registerCommand("epm", "Ethix Package Manager General Command", async (args) => 
 
 // Handles the install command
 async function handleInstall(args) {
-    const arg2 = args[1].toLowerCase();
+    const arg2 = args[1]?.toLowerCase();
     if (!arg2) {
         println("Please specify a package to install".red);
         return;
@@ -154,8 +154,8 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         const { version, files, dependencies = [] } = packageJsonData;
 
-        let packages = localStorage.getItem("packages");
-        const storedPackage = packages[packageName] ? JSON.parse(packages[packageName]) : null;
+        let packages = JSON.parse(localStorage.getItem("packages") || '{}');
+        const storedPackage = packages[packageName] || null;
         if (storedPackage?.version === version) {
             status(`\tPackage ${packageName} is already installed and up to date`.green);
             return;
@@ -174,7 +174,10 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         }
 
         const packageInfo = { version, files, dependencies };
-        localStorage.setItem(packages[packageName], JSON.stringify(packageInfo));
+
+        packages[packageName] = packageInfo;
+
+        localStorage.setItem("packages", JSON.stringify(packages));
         status(`Package ${packageName} installed successfully`.green);
     } catch (error) {
         println(`Error installing package. Check console for details`.red);
@@ -183,18 +186,20 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 }
 
 async function removePackage(packageName) {
-    let packages = localStorage.getItem("packages");
+    let packages = JSON.parse(localStorage.getItem("packages") || '{}');
     if (packages[packageName]) {
-        localStorage.removeItem(packages)[packageName];
+        delete packages[packageName];
+        localStorage.setItem("packages", JSON.stringify(packages));
         println(`Package ${packageName} removed successfully`.green);
-        println(`Some packages require you to refresh the page to be fully removed`.yellow)
+        println(`Packages require you to reload the page to remove. This is a limitation of JavaScript.`.yellow)
     } else {
         println(`Package ${packageName} is not installed`.yellow);
     }
 }
 
 async function listPackages() {
-    const packageNames = Object.keys(localStorage.getItem("packages"));
+    const packages = JSON.parse(localStorage.getItem("packages") || '{}');
+    const packageNames = Object.keys(packages);
     if (packageNames.length === 0) {
         println("No packages installed".yellow);
         return;
@@ -202,33 +207,23 @@ async function listPackages() {
 
     println("Installed packages:".green);
     for (const packageName of packageNames) {
-        let packageInfo, packages;
-        try {
-            packages = JSON.parse(localStorage.getItem("packages"));
-            packageInfo = packages[packageName];
+        const packageInfo = packages[packageName];
 
-            if (!packageInfo) throw new Error(`Package ${packageName} is not installed`);
-        } catch (err) {
-            localStorage.setItem("packages", JSON.stringify({}));
+        if (!packageInfo) {
+            delete packages[packageName];
+            localStorage.setItem("packages", JSON.stringify(packages));
             continue;
         }
         println(`\t${packageName} (${packageInfo.version})`);
     }
 }
 async function loadInstalledPackages() {
-
     if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify({}));
 
-    const packageNames = Object.keys(localStorage.getItem("packages") || {});
+    const packages = JSON.parse(localStorage.getItem("packages") || '{}');
     let packageCount = 0;
-    for (const packageName of packageNames) {
-        let storedPackage;
-        try {
-            storedPackage = JSON.parse(localStorage.getItem("packages")[packageName]);
-        } catch (err) {
-            localStorage.setItem("packages", JSON.stringify({}));
-            continue;
-        }
+    for (const packageName of Object.keys(packages)) {
+        let storedPackage = packages[packageName];
         if (storedPackage) {
             const { files } = storedPackage;
             if (!files) continue;
@@ -293,9 +288,9 @@ async function createPackage(packageName) {
     }
 
     const packageJsonString = JSON.stringify(packageJson, null, 4);
-    await createDirectory(currentDirectory + packageName);
-    await createFile(currentDirectory + packageName + "/package.json", packageJsonString);
-    await createFile(currentDirectory + packageName + "/index.js", "");
+    await createDirectory(currentDirectory + '/' + packageName);
+    await createFile(currentDirectory + '/' + packageName + "/package.json", packageJsonString);
+    await createFile(currentDirectory + '/' + packageName + "/index.js", "");
     println(`Package ${packageName} created successfully`.green);
 }
 
