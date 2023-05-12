@@ -225,20 +225,23 @@ async function loadInstalledPackages() {
 
     const packages = JSON.parse(localStorage.getItem("packages") || '{}');
     let packageCount = 0;
-    for (const packageName of Object.keys(packages)) {
-        let storedPackage = packages[packageName];
-        if (storedPackage) {
-            const { files } = storedPackage;
-            if (!files) continue;
-            for (const file of files) {
-                await importPackage(packageName, file);
+
+    const packageNames = Object.keys(packages);
+    for (const packageName of packageNames) {
+        const storedPackage = packages[packageName];
+        if (storedPackage && storedPackage.files) {
+            const filePaths = storedPackage.files;
+            for (const filePath of filePaths) {
+                await importPackage(packageName, filePath);
             }
             packageCount++;
         }
     }
+
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
     println(`Loaded ${packageCount} package(s) in ${TIME_TAKEN_MS}ms`.gray);
 }
+
 
 
 async function searchPackage(query) {

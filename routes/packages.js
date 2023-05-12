@@ -5,18 +5,34 @@ const path = require("path");
 const fs = require("fs").promises;
 const packagesRouter = express.Router();
 
-packagesRouter.get("/:packageName/*", async (req, res) => {
-    const packageName = req.params.packageName;
-    const filePath = req.params[0];
-    const fullPath = path.join(__dirname, "../packages", packageName, filePath);
+packagesRouter.get("/", async (req, res) => {
+    const packageNames = req.query.packages.split(",");
+    const filePaths = req.query.files.split(",");
+    const results = [];
 
-    try {
-        const contents = await fs.readFile(fullPath, "utf8");
-        res.status(200).send(contents);
-    } catch (err) {
-        console.error(err);
-        res.status(404).send("File not found");
+    for (let i = 0; i < packageNames.length; i++) {
+        const packageName = packageNames[i];
+        const filePath = filePaths[i];
+        const fullPath = path.join(import.meta.dir, "../packages", packageName, filePath);
+
+        try {
+            const contents = await fs.readFile(fullPath, "utf8");
+            results.push({
+                packageName,
+                filePath,
+                contents
+            });
+        } catch (err) {
+            console.error(err);
+            results.push({
+                packageName,
+                filePath,
+                error: "File not found"
+            });
+        }
     }
+
+    res.status(200).json(results);
 });
 
 module.exports = packagesRouter;
