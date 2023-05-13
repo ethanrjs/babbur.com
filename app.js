@@ -3,7 +3,7 @@ import { join } from "path";
 import { promises as fs } from "fs";
 import serveStatic from "serve-static";
 
-import packagesRouter from "./routes/packages";
+import packagesRouter from "./routes/packages.js";
 import searchRouter from "./routes/search.js";
 import versionRouter from "./routes/version.js";
 
