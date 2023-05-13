@@ -227,6 +227,7 @@ async function listPackages() {
         println(`\t${packageName} (${packageInfo.version})`);
     }
 }
+
 async function loadInstalledPackages() {
     const START_TIME_MS = Date.now();
     if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify({}));
@@ -235,14 +236,23 @@ async function loadInstalledPackages() {
     let packageCount = 0;
 
     const packageNames = Object.keys(packages);
+    const packagesToImport = [];
+
     for (const packageName of packageNames) {
         const storedPackage = packages[packageName];
         if (storedPackage && storedPackage.files) {
             const filePaths = storedPackage.files;
-            await importPackage([packageName], [filePaths]);
+            packagesToImport.push({ packageName, filePaths });
             packageCount++;
         }
     }
+
+    // Convert packagesToImport to the format expected by importPackage()
+    const names = packagesToImport.map(pkg => pkg.packageName);
+    const files = packagesToImport.flatMap(pkg => pkg.filePaths);
+
+    // Import all packages at once
+    await importPackage(names, files);
 
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
     println(`Loaded ${packageCount} package(s) in ${TIME_TAKEN_MS}ms`.gray);
