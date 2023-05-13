@@ -7,38 +7,23 @@ const packagesRouter = express.Router();
 
 packagesRouter.get("/", async (req, res) => {
     const packageNames = req.query.packages.split(",");
-    // Assumes filePaths is a string representation of a 2D array
     const filePaths = JSON.parse(req.query.files);
     const results = [];
+    const packagesPath = path.resolve(import.meta.dir, "../packages");
 
-    for (let i = 0; i < packageNames.length; i++) {
-        const packageName = packageNames[i];
-        const packageResults = [];
-
-        for (let j = 0; j < filePaths[i].length; j++) {
-            const filePath = filePaths[i][j];
-            const fullPath = path.join(import.meta.dir, "../packages", packageName, filePath);
-
+    await Promise.all(packageNames.map(async (packageName, i) => {
+        const packageResults = await Promise.all(filePaths[i].map(async (filePath) => {
+            const fullPath = path.join(packagesPath, packageName, filePath);
             try {
                 const contents = await fs.readFile(fullPath, "utf8");
-                packageResults.push({
-                    filePath,
-                    contents
-                });
+                return { filePath, contents };
             } catch (err) {
                 console.error(err);
-                packageResults.push({
-                    filePath,
-                    error: "File not found"
-                });
+                return { filePath, error: "File not found" };
             }
-        }
-
-        results.push({
-            packageName,
-            files: packageResults
-        });
-    }
+        }));
+        results.push({ packageName, files: packageResults });
+    }));
 
     res.status(200).json(results);
 });
