@@ -3,6 +3,8 @@ import { resolve, join } from "path";
 import { promises as fs } from "fs";
 const packagesRouter = Router();
 
+// example query: https://babbur.com/packages?packages=neofetch&files=[[%22package.json%22]]
+
 packagesRouter.get("/", async (req, res) => {
 
     if (!req.query.packages || !req.query.files) {
@@ -37,8 +39,8 @@ packagesRouter.get("/", async (req, res) => {
         const packageResults = await Promise.all(filePaths[i].map(async (filePath) => {
             const fullPath = join(packagesPath, packageName, filePath);
             try {
-                const contents = await fs.readFile(fullPath, "utf8");
-                return { filePath, contents };
+                const fileContents = Bun.file(fullPath);
+                return { filePath, contents: await fileContents.text() };
             } catch (err) {
                 console.error(err);
                 return { filePath, error: "File not found" };

@@ -168,25 +168,30 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         const START_TIME_MS = Date.now();
         status(`Installing package ${packageName}...`.white);
-        status(`\tFetching package.json...`.gray);
 
-        const packageJson = await fetch(`/packages/${packageName}/package.json`);
-        if (!packageJson.ok) {
+        status(`\tFetching package data...`.gray);
+
+        const response = await fetch(`/packages?packages=${packageName}&files=[["package.json"]]`);
+        if (!response.ok) {
             status(`\tError installing package ${packageName}: Does not exist`.red);
             return;
         }
 
-        let packageJsonData;
+        let packageData;
         try {
-            packageJsonData = await packageJson.json();
+            packageData = await response.json();
         } catch (err) {
-            status(`\tError installing package ${packageName}: Invalid package.json`.red);
+            status(`\tError installing package ${packageName}: Invalid package data`.red);
+            return;
         }
 
-        if (!packageJsonData) return;
+        if (!packageData || !packageData[0] || !packageData[0].files || !packageData[0].files[0]) {
+            status(`\tError installing package ${packageName}: No package data returned`.red);
+            return;
+        }
         status(`\tDone`.green);
 
-        const { version, files, dependencies = [] } = packageJsonData;
+        const { version, files, dependencies = [] } = JSON.parse(packageData[0].files[0].contents);
 
         const packages = getPackagesFromLocalStorage();
         const storedPackage = packages[packageName] || null;
@@ -217,6 +222,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         console.error(error);
     }
 }
+
 
 async function removePackage(packageName) {
     const packages = getPackagesFromLocalStorage();
@@ -285,6 +291,7 @@ async function loadInstalledPackages() {
 
 
 async function searchPackage(query) {
+    const START_TIME_MS = Date.now();
     const searchResults = await fetch(`/search?q=${query}`);
     const searchResultsJson = await searchResults.json();
 
@@ -303,6 +310,9 @@ async function searchPackage(query) {
         println(`\t${result.name.green} (${result.version.gray}) - ${result.author.blueBright}`);
         println(`\t\t${result.description}\n`);
     });
+
+    const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
+    println(`Found ${searchResultsJson.length} package(s) in ${TIME_TAKEN_MS}ms`.gray);
 }
 
 async function seekPackages() {
