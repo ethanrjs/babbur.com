@@ -7,7 +7,17 @@ const packagesRouter = express.Router();
 
 packagesRouter.get("/", async (req, res) => {
     const packageNames = req.query.packages.split(",");
-    const filePaths = JSON.parse(req.query.files);
+    let filePaths;
+    try {
+        filePaths = JSON.parse(req.query.files);
+    } catch (err) {
+        return res.status(400).json({ error: 'Invalid files parameter' });
+    }
+
+    if (!Array.isArray(filePaths) || filePaths.length !== packageNames.length) {
+        return res.status(400).json({ error: 'Invalid files parameter' });
+    }
+
     const results = [];
     const packagesPath = path.resolve(import.meta.dir, "../packages");
 
