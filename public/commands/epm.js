@@ -227,7 +227,7 @@ async function removePackage(packageName) {
     }
 }
 
-async function listPackages() {
+async function listInstalledPackages() {
     const packages = getPackagesFromLocalStorage();
     const packageNames = Object.keys(packages);
     if (packageNames.length === 0) {
