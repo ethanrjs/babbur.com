@@ -100,6 +100,7 @@ async function importPackage(packageNames, files) {
     );
 
     const moduleSpecifier = `/packages?packages=${packageNames.join(",")}&files=${encodeURIComponent(JSON.stringify(files))}`;
+    console.log(`Importing packages from ${moduleSpecifier}`)
     try {
         const response = await fetch(moduleSpecifier);
         if (!response.ok) {
