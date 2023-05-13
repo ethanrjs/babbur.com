@@ -266,13 +266,14 @@ async function loadInstalledPackages() {
     }
 
     const names = packagesToImport.map(pkg => pkg.packageName);
-    const files = packagesToImport.flatMap(pkg => pkg.filePaths);
+    const files = packagesToImport.map(pkg => pkg.filePaths);  // Changed from flatMap to map
 
     await importPackage(names, files);
 
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
     println(`Loaded ${packageCount} package(s) in ${TIME_TAKEN_MS}ms`.gray);
 }
+
 
 
 

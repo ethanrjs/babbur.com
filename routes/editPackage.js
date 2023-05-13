@@ -15,7 +15,6 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs").promises;
 const createRouter = express.Router();
-const rateLimit = require("express-rate-limit");
 
 createRouter.post("/edit", async (req, res) => {
     const { package: packageName, secret, file, content } = req.body;
