@@ -1,9 +1,7 @@
-'use strict';
-
-const express = require("express");
-const path = require("path");
-const fs = require("fs").promises;
-const packagesRouter = express.Router();
+import { Router } from "express";
+import { resolve, join } from "path";
+import { promises as fs } from "fs";
+const packagesRouter = Router();
 
 packagesRouter.get("/", async (req, res) => {
     const packageNames = req.query.packages.split(",");
@@ -19,11 +17,11 @@ packagesRouter.get("/", async (req, res) => {
     }
 
     const results = [];
-    const packagesPath = path.resolve(__dirname, "../packages");
+    const packagesPath = resolve(import.meta.dir, "../packages");
 
     await Promise.all(packageNames.map(async (packageName, i) => {
         const packageResults = await Promise.all(filePaths[i].map(async (filePath) => {
-            const fullPath = path.join(packagesPath, packageName, filePath);
+            const fullPath = join(packagesPath, packageName, filePath);
             try {
                 const contents = await fs.readFile(fullPath, "utf8");
                 return { filePath, contents };
@@ -38,4 +36,4 @@ packagesRouter.get("/", async (req, res) => {
     res.status(200).json(results);
 });
 
-module.exports = packagesRouter;
+export default packagesRouter;

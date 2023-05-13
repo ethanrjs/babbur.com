@@ -1,22 +1,25 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs").promises;
-const serveStatic = require("serve-static");
+import express from "express";
+import { join } from "path";
+import { promises as fs } from "fs";
+import serveStatic from "serve-static";
+
+import packagesRouter from "./routes/packages";
+import searchRouter from "./routes/search.js";
+import versionRouter from "./routes/version.js";
 
 const app = express();
-const packagesRouter = require("./routes/packages");
 
 require('dotenv').config();
 const PORT = process.env.PORT || 5500;
 const REFRESH_INTERVAL = process.env.REFRESH_INTERVAL || 30000;
 
 // Serve public files
-app.use(serveStatic(path.join(__dirname, "public")));
+app.use(serveStatic(join(import.meta.dir, "public")));
 
 // Function to search and update package list
 async function refreshPackageList() {
     try {
-        const packagesPath = path.join(__dirname, "packages");
+        const packagesPath = join(import.meta.dir, "packages");
 
         const folders = await fs.readdir(packagesPath);
 
@@ -24,13 +27,13 @@ async function refreshPackageList() {
 
         for (const folder of folders) {
             try {
-                const packageJsonPath = path.join(packagesPath, folder, "package.json");
+                const packageJsonPath = join(packagesPath, folder, "package.json");
                 const data = await fs.readFile(packageJsonPath);
 
                 const packageJson = JSON.parse(data);
                 updatedPackages[packageJson.name] = {
                     version: packageJson.version || "0.0.0",
-                    path: path.join(folder) || "",
+                    path: join(folder) || "",
                     description: packageJson.description || "",
                     author: packageJson.author || "",
                 };
@@ -48,11 +51,8 @@ async function refreshPackageList() {
 setInterval(refreshPackageList, REFRESH_INTERVAL);
 
 app.use("/packages", packagesRouter);
-
-app.use(require("./routes/search"));
-app.use(require("./routes/create"));
-app.use(require("./routes/version"));
-app.use(require("./routes/editPackage"));
+app.use("/search", searchRouter);
+app.use("/version", versionRouter);
 
 app.use((req, res) => {
     res.status(404).send("Sorry, we couldn't find that!");

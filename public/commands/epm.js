@@ -271,6 +271,10 @@ async function loadInstalledPackages() {
     const names = packagesToImport.map(pkg => pkg.packageName);
     const files = packagesToImport.map(pkg => pkg.filePaths);  // Changed from flatMap to map
 
+    if (packageCount === 0) {
+        println("No packages installed".gray);
+        return;
+    }
     await importPackage(names, files);
 
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;

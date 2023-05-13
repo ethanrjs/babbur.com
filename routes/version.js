@@ -1,11 +1,11 @@
 'use strict';
 
-const express = require("express");
-const versionRouter = express.Router();
+import { Router } from "express";
+const versionRouter = Router();
 
 const PORT = process.env.PORT || 5500;
 
-versionRouter.get("/version", async (req, res) => {
+versionRouter.get("/", async (req, res) => {
     let version = require("../package.json").version;
     if (PORT == 5500) {
         version += "-dev";
@@ -13,4 +13,4 @@ versionRouter.get("/version", async (req, res) => {
     res.send(version);
 });
 
-module.exports = versionRouter;
+export default versionRouter;

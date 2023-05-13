@@ -1,11 +1,11 @@
 'use strict';
 
-const express = require("express");
-const fs = require("fs").promises;
-const fastFuzzy = require("fast-fuzzy");
-const searchRouter = express.Router();
+import { Router } from "express";
+import { promises as fs } from "fs";
+import { search } from "fast-fuzzy";
+const searchRouter = Router();
 
-searchRouter.get("/search", async (req, res) => {
+searchRouter.get("/", async (req, res) => {
     const query = req.query.q;
     const packages = JSON.parse(await fs.readFile("packages.json"));
     const results = [];
@@ -21,7 +21,7 @@ searchRouter.get("/search", async (req, res) => {
         return;
     }
 
-    const searchResults = fastFuzzy.search(query, Object.keys(packages));
+    const searchResults = search(query, Object.keys(packages));
 
     searchResults.forEach(result => {
         results.push({
@@ -35,4 +35,4 @@ searchRouter.get("/search", async (req, res) => {
     res.send(results);
 });
 
-module.exports = searchRouter;
+export default searchRouter;
