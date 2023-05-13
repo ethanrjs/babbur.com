@@ -119,7 +119,7 @@ async function importPackage(packageNames, files) {
 
     const encodedNames = packageNames.join(",");
     const encodedFiles = encodeURIComponent(JSON.stringify(files));
-    const moduleSpecifier = `/api/packages?packages=${encodedNames}&files=${encodedFiles}`;
+    const moduleSpecifier = `/packages?packages=${encodedNames}&files=${encodedFiles}`;
 
     console.log(`Importing packages from ${moduleSpecifier}`)
     try {
