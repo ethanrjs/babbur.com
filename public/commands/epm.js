@@ -1,24 +1,23 @@
 import { registerCommand } from 'ethix:commands'
 import { println } from 'ethix:stdio'
-import { createFile, createDirectory, readFile, resolvePath, currentDirectory } from 'ethix:fs';
+import { createFile, createDirectory, currentDirectory } from 'ethix:fs';
 
 export const packages = {};
-
 registerCommand("epm", "Ethix Package Manager General Command", async (args) => {
     const arg1 = args[0]?.toLowerCase() || '';
 
     switch (arg1) {
         case 'install':
-            await handleInstall(args);
+            await installPackageFromArgs(args);
             break;
         case 'remove':
-            await handleRemove(args);
+            await removePackageFromArgs(args);
             break;
         case 'search':
-            await handleSearch(args);
+            await searchPackageFromArgs(args);
             break;
         case 'list':
-            await listPackages();
+            await listInstalledPackages();
             break;
         case 'update':
             await updateAllPackages();
@@ -27,35 +26,32 @@ registerCommand("epm", "Ethix Package Manager General Command", async (args) => 
             await seekPackages();
             break;
         case 'create':
-            await createPackage(args[1]);
+            await createPackageFromArgs(args[1]);
             break;
         default:
             displayHelp();
     }
 });
 
-// Handles the install command
-async function handleInstall(args) {
-    const arg2 = args[1]?.toLowerCase();
-    if (!arg2) {
+async function installPackageFromArgs(args) {
+    const packageName = args[1]?.toLowerCase();
+    if (!packageName) {
         println("Please specify a package to install".red);
         return;
     }
-    installPackage(arg2);
+    installPackage(packageName);
 }
 
-// Handles the remove command
-async function handleRemove(args) {
-    const arg2 = args[1].toLowerCase();
-    if (!arg2) {
+async function removePackageFromArgs(args) {
+    const packageName = args[1]?.toLowerCase();
+    if (!packageName) {
         println("Please specify a package to remove".red);
         return;
     }
-    removePackage(arg2);
+    removePackage(packageName);
 }
 
-// Handles the search command
-async function handleSearch(args) {
+async function searchPackageFromArgs(args) {
     const splicedArgs = args.splice(1);
     if (splicedArgs.length === 0) {
         println("Please specify a query to search for".red);
@@ -64,7 +60,27 @@ async function handleSearch(args) {
     searchPackage(splicedArgs.join(" "));
 }
 
-// Displays the help information
+async function createPackageFromArgs(packageName) {
+    if (!packageName) {
+        println("Please specify a package name".red);
+        return;
+    }
+
+    const packageJson = {
+        name: packageName,
+        version: "1.0.0",
+        description: "My custom package",
+        files: ["index.js"],
+        dependencies: [],
+    }
+
+    const packageJsonString = JSON.stringify(packageJson, null, 4);
+    await createDirectory(currentDirectory + '/' + packageName);
+    await createFile(currentDirectory + '/' + packageName + "/package.json", packageJsonString);
+    await createFile(currentDirectory + '/' + packageName + "/index.js", "");
+    println(`Package ${packageName} created successfully`.green);
+}
+
 async function displayHelp() {
     println("EPM Help".green);
     println("\tepm install (package) - Install a package");
@@ -75,6 +91,10 @@ async function displayHelp() {
     println("\tepm seek - Seek all packages in repository");
     println("\tepm help - Show this help");
     println("\tepm create (name) - Create a new package");
+}
+
+function getPackagesFromLocalStorage() {
+    return JSON.parse(localStorage.getItem("packages") || '{}');
 }
 
 // Imports and initializes a package
@@ -165,7 +185,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         const { version, files, dependencies = [] } = packageJsonData;
 
-        let packages = JSON.parse(localStorage.getItem("packages") || '{}');
+        const packages = getPackagesFromLocalStorage();
         const storedPackage = packages[packageName] || null;
         if (storedPackage?.version === version) {
             status(`\tPackage ${packageName} is already installed and up to date`.green);
@@ -196,7 +216,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 }
 
 async function removePackage(packageName) {
-    let packages = JSON.parse(localStorage.getItem("packages") || '{}');
+    const packages = getPackagesFromLocalStorage();
     if (packages[packageName]) {
         delete packages[packageName];
         localStorage.setItem("packages", JSON.stringify(packages));
@@ -208,7 +228,7 @@ async function removePackage(packageName) {
 }
 
 async function listPackages() {
-    const packages = JSON.parse(localStorage.getItem("packages") || '{}');
+    const packages = getPackagesFromLocalStorage();
     const packageNames = Object.keys(packages);
     if (packageNames.length === 0) {
         println("No packages installed".yellow);
@@ -230,9 +250,7 @@ async function listPackages() {
 
 async function loadInstalledPackages() {
     const START_TIME_MS = Date.now();
-    if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify({}));
-
-    const packages = JSON.parse(localStorage.getItem("packages") || '{}');
+    const packages = getPackagesFromLocalStorage();
     let packageCount = 0;
 
     const packageNames = Object.keys(packages);
@@ -247,11 +265,9 @@ async function loadInstalledPackages() {
         }
     }
 
-    // Convert packagesToImport to the format expected by importPackage()
     const names = packagesToImport.map(pkg => pkg.packageName);
     const files = packagesToImport.flatMap(pkg => pkg.filePaths);
 
-    // Import all packages at once
     await importPackage(names, files);
 
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
@@ -259,11 +275,10 @@ async function loadInstalledPackages() {
 }
 
 
+
 async function searchPackage(query) {
-    // search package from /search endpoint
     const searchResults = await fetch(`/search?q=${query}`);
     const searchResultsJson = await searchResults.json();
-
 
     if (searchResultsJson.length === 0) {
         println(`No packages could be found. Run "epm seek" to view all packages.`.redBright);
@@ -275,45 +290,23 @@ async function searchPackage(query) {
     } else {
         println(`Search results for query ${query}:`.green);
     }
-    for (const result of searchResultsJson) {
+
+    searchResultsJson.forEach(result => {
         println(`\t${result.name.green} (${result.version.gray}) - ${result.author.blueBright}`);
         println(`\t\t${result.description}\n`);
-
-    }
+    });
 }
 
 async function seekPackages() {
-    // get all packages
     searchPackage("@ALL")
 }
 
+
 async function updateAllPackages() {
-    const packageNames = Object.keys(localStorage.getItem("packages"));
+    const packageNames = Object.keys(getPackagesFromLocalStorage());
     for (const packageName of packageNames) {
         await installPackage(packageName);
     }
     println(`Updated ${packageNames.length} package(s)`.gray);
 }
-
-async function createPackage(packageName) {
-    if (!packageName) {
-        println("Please specify a package name".red);
-        return;
-    }
-
-    const packageJson = {
-        name: packageName,
-        version: "1.0.0",
-        description: "My custom package",
-        files: ["index.js"],
-        dependencies: [],
-    }
-
-    const packageJsonString = JSON.stringify(packageJson, null, 4);
-    await createDirectory(currentDirectory + '/' + packageName);
-    await createFile(currentDirectory + '/' + packageName + "/package.json", packageJsonString);
-    await createFile(currentDirectory + '/' + packageName + "/index.js", "");
-    println(`Package ${packageName} created successfully`.green);
-}
-
 loadInstalledPackages();
