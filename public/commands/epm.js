@@ -80,7 +80,7 @@ async function displayHelp() {
 // Imports and initializes a package
 // Imports and initializes a package
 // Imports and initializes a package
-async function importPackage(packageNames, fileNames) {
+async function importPackage(packageNames, files) {
     const importProxy = new Proxy(
         {},
         {
