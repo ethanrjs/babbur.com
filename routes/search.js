@@ -7,7 +7,10 @@ const searchRouter = Router();
 
 searchRouter.get("/", async (req, res) => {
     const query = req.query.q;
-    const packages = JSON.parse(await fs.readFile("packages.json"));
+    const packages = JSON.parse(await fs.readFile("packages.json", "utf8"));
+    /**
+     * @type {{ name: string; version: string; description: string; author: string; }[]}
+     */
     const results = [];
 
     if (query === "@ALL") {
@@ -21,6 +24,7 @@ searchRouter.get("/", async (req, res) => {
         return;
     }
 
+    // @ts-ignore
     const searchResults = search(query, Object.keys(packages));
 
     searchResults.forEach(result => {
