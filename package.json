@@ -1,14 +1,15 @@
 {
   "name": "babbur.com",
-  "version": "0.2.3",
+  "version": "0.2.6",
   "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "ethanrjs",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

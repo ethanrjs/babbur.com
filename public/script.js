@@ -1,4 +1,3 @@
-
 async function loadCommands() {
     // Built-in commands
     const commands = [
