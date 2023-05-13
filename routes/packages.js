@@ -19,7 +19,7 @@ packagesRouter.get("/", async (req, res) => {
     }
 
     const results = [];
-    const packagesPath = path.resolve(import.meta.dir, "../packages");
+    const packagesPath = path.resolve(i__dirname, "../packages");
 
     await Promise.all(packageNames.map(async (packageName, i) => {
         const packageResults = await Promise.all(filePaths[i].map(async (filePath) => {

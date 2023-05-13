@@ -11,12 +11,12 @@ const PORT = process.env.PORT || 5500;
 const REFRESH_INTERVAL = process.env.REFRESH_INTERVAL || 30000;
 
 // Serve public files
-app.use(serveStatic(path.join(import.meta.dir, "public")));
+app.use(serveStatic(path.join(__dirname, "public")));
 
 // Function to search and update package list
 async function refreshPackageList() {
     try {
-        const packagesPath = path.join(import.meta.dir, "packages");
+        const packagesPath = path.join(__dirname, "packages");
 
         const folders = await fs.readdir(packagesPath);
 
