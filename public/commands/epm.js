@@ -99,7 +99,7 @@ async function importPackage(packageNames, fileNames) {
         }
     );
 
-    const moduleSpecifier = `/packages?packages=${packageNames.join(",")}&files=${fileNames.join(",")}`;
+    const moduleSpecifier = `/packages?packages=${packageNames.join(",")}&files=${encodeURIComponent(JSON.stringify(files))}`;
     try {
         const response = await fetch(moduleSpecifier);
         if (!response.ok) {
@@ -178,7 +178,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
         status("\tDone".green);
 
         status(`\tGetting ${files.length} file(s)...`.gray);
-        await importPackage([packageName], files);
+        await importPackage([packageName], [files]);
         status(`\tDone`.green);
 
         const packageInfo = { version, files, dependencies };
@@ -238,9 +238,7 @@ async function loadInstalledPackages() {
         const storedPackage = packages[packageName];
         if (storedPackage && storedPackage.files) {
             const filePaths = storedPackage.files;
-            for (const filePath of filePaths) {
-                await importPackage(packageName, filePath);
-            }
+            await importPackage([packageName], [filePaths]);
             packageCount++;
         }
     }
@@ -248,7 +246,6 @@ async function loadInstalledPackages() {
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
     println(`Loaded ${packageCount} package(s) in ${TIME_TAKEN_MS}ms`.gray);
 }
-
 
 
 async function searchPackage(query) {
