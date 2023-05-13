@@ -98,8 +98,6 @@ function getPackagesFromLocalStorage() {
 }
 
 // Imports and initializes a package
-// Imports and initializes a package
-// Imports and initializes a package
 async function importPackage(packageNames, files) {
     const importProxy = new Proxy(
         {},
@@ -119,7 +117,10 @@ async function importPackage(packageNames, files) {
         }
     );
 
-    const moduleSpecifier = `/packages?packages=${packageNames.join(",")}&files=${encodeURIComponent(JSON.stringify(files))}`;
+    const encodedNames = packageNames.join(",");
+    const encodedFiles = encodeURIComponent(JSON.stringify(files));
+    const moduleSpecifier = `/api/packages?packages=${encodedNames}&files=${encodedFiles}`;
+
     console.log(`Importing packages from ${moduleSpecifier}`)
     try {
         const response = await fetch(moduleSpecifier);
@@ -127,20 +128,22 @@ async function importPackage(packageNames, files) {
             throw new Error(`Error fetching ${moduleSpecifier}`);
         }
 
-        const modules = await response.json();
-        for (const module of modules) {
-            if (module.error) {
-                console.error(`Error importing package ${module.packageName}:`, module.error);
-                continue;
+        const packages = await response.json();
+        for (const pkg of packages) {
+            for (const file of pkg.files) {
+                if (file.error) {
+                    console.error(`Error importing file ${file.filePath} from package ${pkg.packageName}:`, file.error);
+                    continue;
+                }
+                const blob = new Blob([file.contents], { type: "text/javascript" });
+                const blobURL = URL.createObjectURL(blob);
+
+                const importedModule = await import(blobURL);
+                Object.assign(importProxy, importedModule);
+                importProxy.onReady();
+
+                URL.revokeObjectURL(blobURL);
             }
-            const blob = new Blob([module.contents], { type: "text/javascript" });
-            const blobURL = URL.createObjectURL(blob);
-
-            const importedModule = await import(blobURL);
-            Object.assign(importProxy, importedModule);
-            importProxy.onReady();
-
-            URL.revokeObjectURL(blobURL);
         }
     } catch (error) {
         console.error(`Error importing packages:`, error);
