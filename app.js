@@ -29,7 +29,7 @@ async function refreshPackageList() {
         for (const folder of folders) {
             try {
                 const packageJsonPath = join(packagesPath, folder, "package.json");
-                const data = await fs.readFile(packageJsonPath);
+                const data = await Bun.file(packageJsonPath).text();
 
                 const packageJson = JSON.parse(data);
                 updatedPackages[packageJson.name] = {
@@ -43,7 +43,7 @@ async function refreshPackageList() {
             }
         }
 
-        await fs.writeFile("packages.json", JSON.stringify(updatedPackages, null, 2));
+        Bun.write("packages.json", JSON.stringify(updatedPackages, null, 2));
     } catch (err) {
         console.error("Error reading packages directory or writing packages.json:", err);
     }

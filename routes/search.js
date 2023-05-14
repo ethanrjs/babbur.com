@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { promises as fs } from "fs";
 import { search } from "fast-fuzzy";
 const searchRouter = Router();
 
