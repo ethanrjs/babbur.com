@@ -78,10 +78,8 @@ input.addEventListener('keydown', async (event) => {
 
 });
 
-input.addEventListener('blur', async () => {
+document.addEventListener('keydown', (event) => {
     if (!prompt) return;
-    await new Promise(resolve => setTimeout(resolve, 10));
-
     input.focus();
 });
 
