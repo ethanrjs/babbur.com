@@ -2,9 +2,13 @@ import { processCommands } from 'ethix:commandParser';
 import { commands } from 'ethix:commands';
 import { print, println, prompt } from 'ethix:stdio';
 import { currentDirectory } from 'ethix:fs';
+
 const input = document.getElementById('input');
 const terminal = document.querySelector('#terminal');
-const inputLine = document.querySelector('#input-line');
+const userElem = document.getElementById('user');
+const promptElem = document.getElementById('prompt');
+const directory = document.getElementById('directory');
+
 let history = [];
 let historyIndex = 0;
 const maxHistorySize = 100;
@@ -91,10 +95,6 @@ terminal.childNodes.forEach((node) => {
         terminal.removeChild(node);
     }
 }); // dont know why i need this but it works
-
-const userElem = document.getElementById('user');
-const promptElem = document.getElementById('prompt');
-const directory = document.getElementById('directory');
 
 export function updatePrompt() {
     let lastPartOfCwd = currentDirectory.split('/').pop();

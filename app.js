@@ -2,16 +2,15 @@ import express from 'express';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import serveStatic from 'serve-static';
-import dotenv from 'dotenv';
 
 import packagesRouter from './routes/packages.js';
 import searchRouter from './routes/search.js';
 import versionRouter from './routes/version.js';
 
 const app = express();
-dotenv.config();
 
-const PORT = process.env.PORT || 5500;
+const PORT = process.argv.includes("--development") ? 5500 : 5000;
+
 const REFRESH_INTERVAL = process.env.REFRESH_INTERVAL || 30000;
 
 // Serve public files
@@ -55,7 +54,7 @@ app.use('/packages', packagesRouter);
 app.use('/search', searchRouter);
 app.use('/version', versionRouter);
 
-app.use((req, res) => {
+app.use((_req, res) => {
     res.status(404).send("Sorry, we couldn't find that!");
 });
 
