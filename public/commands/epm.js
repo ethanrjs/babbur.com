@@ -1,9 +1,9 @@
-import { registerCommand } from 'ethix:commands'
-import { println } from 'ethix:stdio'
+import { registerCommand } from 'ethix:commands';
+import { println } from 'ethix:stdio';
 import { createFile, createDirectory, currentDirectory } from 'ethix:fs';
 
 export const packages = {};
-registerCommand("epm", "Ethix Package Manager General Command", async (args) => {
+registerCommand('epm', 'Ethix Package Manager General Command', async (args) => {
     const arg1 = args[0]?.toLowerCase() || '';
 
     switch (arg1) {
@@ -36,7 +36,7 @@ registerCommand("epm", "Ethix Package Manager General Command", async (args) => 
 async function installPackageFromArgs(args) {
     const packageName = args[1]?.toLowerCase();
     if (!packageName) {
-        println("Please specify a package to install".red);
+        println('Please specify a package to install'.red);
         return;
     }
     installPackage(packageName);
@@ -45,7 +45,7 @@ async function installPackageFromArgs(args) {
 async function removePackageFromArgs(args) {
     const packageName = args[1]?.toLowerCase();
     if (!packageName) {
-        println("Please specify a package to remove".red);
+        println('Please specify a package to remove'.red);
         return;
     }
     removePackage(packageName);
@@ -54,47 +54,47 @@ async function removePackageFromArgs(args) {
 async function searchPackageFromArgs(args) {
     const splicedArgs = args.splice(1);
     if (splicedArgs.length === 0) {
-        println("Please specify a query to search for".red);
+        println('Please specify a query to search for'.red);
         return;
     }
-    searchPackage(splicedArgs.join(" "));
+    searchPackage(splicedArgs.join(' '));
 }
 
 async function createPackageFromArgs(packageName) {
     if (!packageName) {
-        println("Please specify a package name".red);
+        println('Please specify a package name'.red);
         return;
     }
 
     const packageJson = {
         name: packageName,
-        version: "1.0.0",
-        description: "My custom package",
-        files: ["index.js"],
-        dependencies: [],
-    }
+        version: '1.0.0',
+        description: 'My custom package',
+        files: ['index.js'],
+        dependencies: []
+    };
 
     const packageJsonString = JSON.stringify(packageJson, null, 4);
     await createDirectory(currentDirectory + '/' + packageName);
-    await createFile(currentDirectory + '/' + packageName + "/package.json", packageJsonString);
-    await createFile(currentDirectory + '/' + packageName + "/index.js", "");
+    await createFile(currentDirectory + '/' + packageName + '/package.json', packageJsonString);
+    await createFile(currentDirectory + '/' + packageName + '/index.js', '');
     println(`Package ${packageName} created successfully`.green);
 }
 
 async function displayHelp() {
-    println("EPM Help".green);
-    println("\tepm install (package) - Install a package");
-    println("\tepm remove (package) - Remove a package");
-    println("\tepm search (query) - Search for a package")
-    println("\tepm list - List all installed packages");
-    println("\tepm update - Update all installed packages");
-    println("\tepm seek - Seek all packages in repository");
-    println("\tepm help - Show this help");
-    println("\tepm create (name) - Create a new package");
+    println('EPM Help'.green);
+    println('\tepm install (package) - Install a package');
+    println('\tepm remove (package) - Remove a package');
+    println('\tepm search (query) - Search for a package');
+    println('\tepm list - List all installed packages');
+    println('\tepm update - Update all installed packages');
+    println('\tepm seek - Seek all packages in repository');
+    println('\tepm help - Show this help');
+    println('\tepm create (name) - Create a new package');
 }
 
 function getPackagesFromLocalStorage() {
-    return JSON.parse(localStorage.getItem("packages") || '{}');
+    return JSON.parse(localStorage.getItem('packages') || '{}');
 }
 
 // Imports and initializes a package
@@ -103,25 +103,25 @@ async function importPackage(packageNames, files) {
         {},
         {
             get: (target, prop) => {
-                if (prop === "onReady") {
+                if (prop === 'onReady') {
                     return function () {
                         for (const packageName of packageNames) {
-                            if (typeof window[`${packageName}_onReady`] === "function") {
+                            if (typeof window[`${packageName}_onReady`] === 'function') {
                                 window[`${packageName}_onReady`]();
                             }
                         }
                     };
                 }
                 return target[prop];
-            },
+            }
         }
     );
 
-    const encodedNames = packageNames.join(",");
+    const encodedNames = packageNames.join(',');
     const encodedFiles = encodeURIComponent(JSON.stringify(files));
     const moduleSpecifier = `/packages?packages=${encodedNames}&files=${encodedFiles}`;
 
-    console.log(`Importing packages from ${moduleSpecifier}`)
+    console.log(`Importing packages from ${moduleSpecifier}`);
     try {
         const response = await fetch(moduleSpecifier);
         if (!response.ok) {
@@ -135,7 +135,7 @@ async function importPackage(packageNames, files) {
                     console.error(`Error importing file ${file.filePath} from package ${pkg.packageName}:`, file.error);
                     continue;
                 }
-                const blob = new Blob([file.contents], { type: "text/javascript" });
+                const blob = new Blob([file.contents], { type: 'text/javascript' });
                 const blobURL = URL.createObjectURL(blob);
 
                 const importedModule = await import(blobURL);
@@ -150,14 +150,10 @@ async function importPackage(packageNames, files) {
     }
 }
 
-
-
-
-
 // Helper function to display status messages
 async function printStatus(message, isDependency = false, isStartup = false) {
     if (!isStartup) {
-        const prefix = isDependency ? "\t" : "";
+        const prefix = isDependency ? '\t' : '';
         println(`${prefix}${message}`);
     }
 }
@@ -199,12 +195,12 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
             status(`\tPackage ${packageName} is already installed and up to date`.green);
             return;
         } else {
-            status(`\t${storedPackage ? "Updating" : "Downloading"} package ${packageName}...`.gray);
+            status(`\t${storedPackage ? 'Updating' : 'Downloading'} package ${packageName}...`.gray);
         }
 
-        status("\tInstalling dependencies...".gray);
+        status('\tInstalling dependencies...'.gray);
         await Promise.all(dependencies.map((dependency) => installPackage(dependency, true)));
-        status("\tDone".green);
+        status('\tDone'.green);
 
         status(`\tGetting ${files.length} file(s)...`.gray);
         await importPackage([packageName], [files]);
@@ -214,7 +210,7 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
 
         packages[packageName] = packageInfo;
 
-        localStorage.setItem("packages", JSON.stringify(packages));
+        localStorage.setItem('packages', JSON.stringify(packages));
         const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
         status(`Package ${packageName} installed successfully`.green + ` (${TIME_TAKEN_MS}ms)`.gray);
     } catch (error) {
@@ -223,14 +219,13 @@ async function installPackage(packageName, isDependency = false, isStartup = fal
     }
 }
 
-
 async function removePackage(packageName) {
     const packages = getPackagesFromLocalStorage();
     if (packages[packageName]) {
         delete packages[packageName];
-        localStorage.setItem("packages", JSON.stringify(packages));
+        localStorage.setItem('packages', JSON.stringify(packages));
         println(`Package ${packageName} removed successfully`.green);
-        println(`Packages require you to reload the page to remove. This is a limitation of JavaScript.`.yellow)
+        println(`Packages require you to reload the page to remove. This is a limitation of JavaScript.`.yellow);
     } else {
         println(`Package ${packageName} is not installed`.yellow);
     }
@@ -240,17 +235,17 @@ async function listInstalledPackages() {
     const packages = getPackagesFromLocalStorage();
     const packageNames = Object.keys(packages);
     if (packageNames.length === 0) {
-        println("No packages installed".yellow);
+        println('No packages installed'.yellow);
         return;
     }
 
-    println("Installed packages:".green);
+    println('Installed packages:'.green);
     for (const packageName of packageNames) {
         const packageInfo = packages[packageName];
 
         if (!packageInfo) {
             delete packages[packageName];
-            localStorage.setItem("packages", JSON.stringify(packages));
+            localStorage.setItem('packages', JSON.stringify(packages));
             continue;
         }
         println(`\t${packageName} (${packageInfo.version})`);
@@ -274,11 +269,11 @@ async function loadInstalledPackages() {
         }
     }
 
-    const names = packagesToImport.map(pkg => pkg.packageName);
-    const files = packagesToImport.map(pkg => pkg.filePaths);  // Changed from flatMap to map
+    const names = packagesToImport.map((pkg) => pkg.packageName);
+    const files = packagesToImport.map((pkg) => pkg.filePaths); // Changed from flatMap to map
 
     if (packageCount === 0) {
-        println("No packages installed".gray);
+        println('No packages installed'.gray);
         return;
     }
     await importPackage(names, files);
@@ -286,9 +281,6 @@ async function loadInstalledPackages() {
     const TIME_TAKEN_MS = Date.now() - START_TIME_MS;
     println(`Loaded ${packageCount} package(s) in ${TIME_TAKEN_MS}ms`.gray);
 }
-
-
-
 
 async function searchPackage(query) {
     const START_TIME_MS = Date.now();
@@ -300,13 +292,13 @@ async function searchPackage(query) {
         return;
     }
 
-    if (query === "@ALL") {
+    if (query === '@ALL') {
         println(`Search results for all packages:`.green);
     } else {
         println(`Search results for query ${query}:`.green);
     }
 
-    searchResultsJson.forEach(result => {
+    searchResultsJson.forEach((result) => {
         println(`\t${result.name.green} (${result.version.gray}) - ${result.author.blueBright}`);
         println(`\t\t${result.description}\n`);
     });
@@ -316,9 +308,8 @@ async function searchPackage(query) {
 }
 
 async function seekPackages() {
-    searchPackage("@ALL")
+    searchPackage('@ALL');
 }
-
 
 async function updateAllPackages() {
     const packageNames = Object.keys(getPackagesFromLocalStorage());

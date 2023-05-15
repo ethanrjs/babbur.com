@@ -1,11 +1,32 @@
-const colors = ['red', 'redBright', 'yellow', 'yellowBright', 'green', 'greenBright', 'blue', 'blueBright',
-    'magenta', 'magentaBright', 'cyan', 'cyanBright', 'white', 'whiteBright', 'gray', 'black', 'blackBright'];
-colors.forEach(color => {
+const colors = [
+    'red',
+    'redBright',
+    'yellow',
+    'yellowBright',
+    'green',
+    'greenBright',
+    'blue',
+    'blueBright',
+    'magenta',
+    'magentaBright',
+    'cyan',
+    'cyanBright',
+    'white',
+    'whiteBright',
+    'gray',
+    'black',
+    'blackBright'
+];
+colors.forEach((color) => {
     Object.defineProperty(String.prototype, color, {
-        get() { return `<span class="terminal-color-${color}">${this}</span>`; }
+        get() {
+            return `<span class="terminal-color-${color}">${this}</span>`;
+        }
     });
     Object.defineProperty(String.prototype, `bg${color.charAt(0).toUpperCase() + color.slice(1)}`, {
-        get() { return `<span class="terminal-bgColor-${color}">${this}</span>`; }
+        get() {
+            return `<span class="terminal-bgColor-${color}">${this}</span>`;
+        }
     });
 });
 const output = document.getElementById('output');
@@ -44,5 +65,4 @@ export function enablePrompt() {
     // scroll to bottom of #terminal
 }
 
-export { colors as color }
-
+export { colors as color };

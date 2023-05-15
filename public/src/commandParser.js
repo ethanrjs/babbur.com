@@ -1,17 +1,19 @@
-import { commands } from "ethix:commands";
-import { print, println } from "ethix:stdio";
-import { currentDirectory } from "ethix:fs";
+import { commands } from 'ethix:commands';
+import { print, println } from 'ethix:stdio';
+import { currentDirectory } from 'ethix:fs';
 
 async function processCommand(command) {
     const commandParts = command.split(' ');
     const commandName = commandParts.shift().trim();
 
-    const targetCommand = Object.values(commands).find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName));
+    const targetCommand = Object.values(commands).find(
+        (cmd) => cmd.name === commandName || cmd.aliases.includes(commandName)
+    );
 
     let lastPartOfCwd = currentDirectory.split('/').pop();
-    println("admin".redBright);
+    println('admin'.redBright);
     print(` ${lastPartOfCwd}/`.blue);
-    print(" $ ".white);
+    print(' $ '.white);
     print(`${command} `.white);
 
     if (targetCommand) {
@@ -29,7 +31,10 @@ async function processCommand(command) {
 }
 
 export async function processCommands(input) {
-    const commandsList = input.trim().split('&&').map(cmd => cmd.trim());
+    const commandsList = input
+        .trim()
+        .split('&&')
+        .map((cmd) => cmd.trim());
     for (const command of commandsList) {
         await processCommand(command);
     }

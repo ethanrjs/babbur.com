@@ -1,7 +1,7 @@
 // rf command refreshes page
 
-import { registerCommand } from "ethix:commands";
+import { registerCommand } from 'ethix:commands';
 
-registerCommand("rf", "Refreshes the page", () => {
+registerCommand('rf', 'Refreshes the page', () => {
     location.reload();
 });

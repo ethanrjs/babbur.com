@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Terminal</title>
-    <link rel="stylesheet" href="styles.css">
-    <script type="importmap">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Web Terminal</title>
+        <link rel="stylesheet" href="styles.css" />
+        <script type="importmap">
             {
                 "imports": {
                     "ethix:commands": "./src/commands.js",
@@ -18,30 +17,26 @@
                 }
             }
         </script>
-    <script src="./src/stdio.js" type="module"></script>
+        <script src="./src/stdio.js" type="module"></script>
 
-    <script src="./src/commands.js" type="module"></script>
-    <script src="./src/commandParser.js" type="module"></script>
-    <script src="./src/inputHandler.js" type="module"></script>
-    <script src="./src/init.js" type="module"></script>
-    <script src="./src/fs.js" type="module"></script>
+        <script src="./src/commands.js" type="module"></script>
+        <script src="./src/commandParser.js" type="module"></script>
+        <script src="./src/inputHandler.js" type="module"></script>
+        <script src="./src/init.js" type="module"></script>
+        <script src="./src/fs.js" type="module"></script>
 
-    <script src="script.js" type="module"></script>
+        <script src="script.js" type="module"></script>
+    </head>
 
-
-</head>
-
-<body>
-    <div id="terminal">
-        <div id="output"></div>
-        <div id="input-line">
-            <span id="user">admin</span>
-            <span id="directory">/ </span>
-            <span id="prompt">$</span>
-            <input id="input" type="text" autocomplete="off" autofocus>
+    <body>
+        <div id="terminal">
+            <div id="output"></div>
+            <div id="input-line">
+                <span id="user">admin</span>
+                <span id="directory">/ </span>
+                <span id="prompt">$</span>
+                <input id="input" type="text" autocomplete="off" autofocus />
+            </div>
         </div>
-    </div>
-
-</body>
-
+    </body>
 </html>

@@ -1,12 +1,6 @@
 async function loadCommands() {
     // Built-in commands
-    const commands = [
-        'epm',
-        'rf',
-        'help',
-        'clear',
-        'edit'
-    ]
+    const commands = ['epm', 'rf', 'help', 'clear', 'edit'];
 
     const commandsToLoad = commands;
     const loadedCommands = {};
@@ -16,12 +10,11 @@ async function loadCommands() {
 
         loadedCommands[command] = commands[command];
         // add to page's import map
-        let imports = document.querySelector('head script[type="importmap"]')
-        let json = JSON.parse(imports.innerHTML)
-        json.imports[`commands/${command}.js`] = `./commands/${command}.js`
-        imports.innerHTML = JSON.stringify(json)
+        let imports = document.querySelector('head script[type="importmap"]');
+        let json = JSON.parse(imports.innerHTML);
+        json.imports[`commands/${command}.js`] = `./commands/${command}.js`;
+        imports.innerHTML = JSON.stringify(json);
     }
-
 }
 
 loadCommands();

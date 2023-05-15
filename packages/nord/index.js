@@ -1,5 +1,3 @@
-
-
 // Nord theme
 const css = `
 
@@ -32,4 +30,4 @@ function onReady() {
     document.head.appendChild(style);
 }
 
-window["nord_onReady"] = onReady;
+window['nord_onReady'] = onReady;

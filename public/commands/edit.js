@@ -3,19 +3,19 @@ import { print, println, clear, disablePrompt, enablePrompt } from 'ethix:stdio'
 import { createFile, readFile, resolvePath } from 'ethix:fs';
 
 let editorOpen = false;
-let buffer = "";
+let buffer = '';
 let cursor = {
     x: 0,
     y: 0
-}
+};
 let cursorPosOther = {
     x: 0,
     y: 0
-}
+};
 
-let openedFileName = "";
+let openedFileName = '';
 let commandMode = false;
-let command = "";
+let command = '';
 
 registerCommand('edit', 'Edit a file', async (args) => {
     if (!args[0]) {
@@ -23,7 +23,7 @@ registerCommand('edit', 'Edit a file', async (args) => {
         return;
     }
 
-    disablePrompt()
+    disablePrompt();
 
     const path = resolvePath(args[0]);
     let file;
@@ -35,25 +35,24 @@ registerCommand('edit', 'Edit a file', async (args) => {
         console.log(error);
     }
 
-    buffer = file !== null ? file : "";
+    buffer = file !== null ? file : '';
     if (file === null) {
-        createFile(path, "");
+        createFile(path, '');
     }
 
     clear();
     openedFileName = path;
 
     // sleep 10ms because the first keypress is being registered causing a newline in files
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
     editorOpen = true;
     renderEditor();
-
 });
 
 // Step 1: Function to draw the cursor at the current position
 function drawCursor(text, longestLineOfText) {
     if (commandMode) return;
-    let line = text[cursor.y] || " ";
+    let line = text[cursor.y] || ' ';
     let beforeCursor = line.slice(0, cursor.x);
     let afterCursor = line.slice(cursor.x);
 
@@ -63,13 +62,12 @@ function drawCursor(text, longestLineOfText) {
 
 // Step 2: Function to handle user input and update the buffer and cursor position
 
-
 function handleCommand(command) {
-    if (command === "w") {
+    if (command === 'w') {
         createFile(openedFileName, buffer);
-    } else if (command === "q") {
+    } else if (command === 'q') {
         editorOpen = false;
-        buffer = "";
+        buffer = '';
 
         let current = { x: cursor.x, y: cursor.y };
         cursor.x = cursorPosOther.x;
@@ -78,16 +76,16 @@ function handleCommand(command) {
         cursorPosOther.x = current.x;
         cursorPosOther.y = current.y;
 
-        openedFileName = "";
+        openedFileName = '';
         commandMode = false;
-        command = "";
+        command = '';
 
         enablePrompt();
         clear();
-    } else if (command === "wq") {
+    } else if (command === 'wq') {
         createFile(openedFileName, buffer);
         editorOpen = false;
-        buffer = "";
+        buffer = '';
 
         let current = { x: cursor.x, y: cursor.y };
         cursor.x = cursorPosOther.x;
@@ -96,15 +94,14 @@ function handleCommand(command) {
         cursorPosOther.x = current.x;
         cursorPosOther.y = current.y;
 
-        openedFileName = "";
+        openedFileName = '';
         commandMode = false;
-        command = "";
+        command = '';
 
         enablePrompt();
         clear();
     }
 }
-
 
 function handleInput(e) {
     if (!editorOpen) return;
@@ -133,21 +130,21 @@ function handleInput(e) {
 
             cursorPosOther.x = current.x;
             cursorPosOther.y = current.y;
-
-
         }
         renderEditor();
         return;
     }
 
-    if (e.key.length === 1) { // For printable characters
+    if (e.key.length === 1) {
+        // For printable characters
         const lines = buffer.split('\n');
-        if (!lines[cursor.y]) lines[cursor.y] = "";
+        if (!lines[cursor.y]) lines[cursor.y] = '';
         lines[cursor.y] = lines[cursor.y].slice(0, cursor.x) + e.key + lines[cursor.y].slice(cursor.x);
         buffer = lines.join('\n');
 
         cursor.x++;
-    } else { // For non-printable characters (arrow keys, backspace, etc.)
+    } else {
+        // For non-printable characters (arrow keys, backspace, etc.)
         switch (e.key) {
             case 'ArrowUp':
                 if (cursor.y > 0) cursor.y--;
@@ -188,7 +185,7 @@ function handleInput(e) {
 
             case 'Tab':
                 const lines3 = buffer.split('\n');
-                lines3[cursor.y] = lines3[cursor.y].slice(0, cursor.x) + "    " + lines3[cursor.y].slice(cursor.x);
+                lines3[cursor.y] = lines3[cursor.y].slice(0, cursor.x) + '    ' + lines3[cursor.y].slice(cursor.x);
                 buffer = lines3.join('\n');
                 cursor.x += 4;
                 break;
@@ -220,21 +217,20 @@ function handleInput(e) {
     renderEditor();
 }
 
-
 function renderEditor() {
     if (!editorOpen) return;
     clear();
-    let output = "";
+    let output = '';
 
     let text = buffer.split('\n');
     let lines = text.length;
 
     // Remove empty lines at the end
-    while (text.length > 0 && text[text.length - 1] === "") {
+    while (text.length > 0 && text[text.length - 1] === '') {
         text.pop();
     }
 
-    let longestLineOfText = Math.max(90, ...text.map(line => line.length));
+    let longestLineOfText = Math.max(90, ...text.map((line) => line.length));
     let longestLineNumber = Math.max(6, String(lines).length);
 
     // Helper function to generate repeated strings
@@ -244,41 +240,49 @@ function renderEditor() {
 
     // Helper function to generate title bar, top, and bottom lines
     function generateLine(prefix, middle) {
-        return `${prefix}${repeatString("—", longestLineNumber)}${middle}${repeatString("—", longestLineOfText + 2)}${prefix}\n`;
+        return `${prefix}${repeatString('—', longestLineNumber)}${middle}${repeatString(
+            '—',
+            longestLineOfText + 2
+        )}${prefix}\n`;
     }
 
-    const titleBarTop = generateLine("+", "+");
+    const titleBarTop = generateLine('+', '+');
     output += titleBarTop;
 
-    const titleBar = `|${" File ".blue}| ${openedFileName.padEnd(longestLineOfText).blueBright} |\n`;
+    const titleBar = `|${' File '.blue}| ${openedFileName.padEnd(longestLineOfText).blueBright} |\n`;
     output += titleBar;
 
-    const topLine = generateLine("+", "+");
+    const topLine = generateLine('+', '+');
     output += topLine;
 
     for (let i = 0; i < lines; i++) {
         const lineNumber = (i + 1).toString().padStart(longestLineNumber);
 
         // If the cursor is on this line, draw the cursor
-        if (!text[i]) text[i] = "";
-        const lineContent = (i === cursor.y && !commandMode) ? drawCursor(text, longestLineOfText) : text[i].padEnd(longestLineOfText + 1);
+        if (!text[i]) text[i] = '';
+        const lineContent =
+            i === cursor.y && !commandMode
+                ? drawCursor(text, longestLineOfText)
+                : text[i].padEnd(longestLineOfText + 1);
 
         output += `|${lineNumber.yellow}|${lineContent} |\n`;
     }
 
-    const bottomLine = generateLine("+", "+");
+    const bottomLine = generateLine('+', '+');
     output += bottomLine;
 
     const commandLineContent = commandMode ? command.slice(0, cursor.x) + '█' + command.slice(cursor.x) : command;
-    const commandLine = `|${" ".repeat(longestLineNumber)}:${commandLineContent}${" ".repeat(longestLineOfText + 2 - commandLineContent.length)}\n`;
+    const commandLine = `|${' '.repeat(longestLineNumber)}:${commandLineContent}${' '.repeat(
+        longestLineOfText + 2 - commandLineContent.length
+    )}\n`;
     output += commandLine;
 
-    const bottomBar = generateLine("+", "+");
+    const bottomBar = generateLine('+', '+');
     output += bottomBar;
 
-    output += `Mode:\t${commandMode ? "EXEC".green : "EDIT".greenBright}\n`;
+    output += `Mode:\t${commandMode ? 'EXEC'.green : 'EDIT'.greenBright}\n`;
     output += `Pos: \t${cursor.x.toString().padStart(3)}, ${cursor.y.toString().padStart(3)}\n`;
-    output += `(Press ${"ESC".blue} to ${commandMode ? "exit".green : "enter".greenBright} command mode)\n`;
+    output += `(Press ${'ESC'.blue} to ${commandMode ? 'exit'.green : 'enter'.greenBright} command mode)\n`;
 
     print(output);
 }

@@ -1,7 +1,7 @@
-import { processCommands } from "ethix:commandParser";
-import { commands } from "ethix:commands"
-import { print, println, prompt } from "ethix:stdio"
-import { currentDirectory } from "ethix:fs";
+import { processCommands } from 'ethix:commandParser';
+import { commands } from 'ethix:commands';
+import { print, println, prompt } from 'ethix:stdio';
+import { currentDirectory } from 'ethix:fs';
 const input = document.getElementById('input');
 const terminal = document.querySelector('#terminal');
 const inputLine = document.querySelector('#input-line');
@@ -13,7 +13,6 @@ const maxHistorySize = 100;
 
 input.addEventListener('keydown', async (event) => {
     if (!prompt) return;
-
 
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -49,7 +48,11 @@ input.addEventListener('keydown', async (event) => {
         event.preventDefault();
         const inputValue = input.value.trim();
         // matchingCommands = first part of the INPUT VALUE matches any command name or alias
-        const matchingCommands = Object.values(commands).filter(command => command.name.startsWith(inputValue.split(' ')[0]) || command.aliases.some(alias => alias.startsWith(inputValue.split(' ')[0])));
+        const matchingCommands = Object.values(commands).filter(
+            (command) =>
+                command.name.startsWith(inputValue.split(' ')[0]) ||
+                command.aliases.some((alias) => alias.startsWith(inputValue.split(' ')[0]))
+        );
         if (matchingCommands.length === 1) {
             const matchedCommand = matchingCommands[0];
             // Check if there is a tab completion callback for the command
@@ -66,16 +69,15 @@ input.addEventListener('keydown', async (event) => {
             }
         } else if (matchingCommands.length > 1) {
             let lastPartOfCwd = currentDirectory.split('/').pop();
-            println("admin".redBright);
+            println('admin'.redBright);
             print(` ${lastPartOfCwd}/`.blue);
-            print(" $ ".white);
+            print(' $ '.white);
             print(`${inputValue} `.white);
-            println(matchingCommands.map(command => command.name).join('   ').gray);
+            println(matchingCommands.map((command) => command.name).join('   ').gray);
         }
     }
 
-    updatePrompt()
-
+    updatePrompt();
 });
 
 document.addEventListener('keydown', (event) => {
@@ -83,7 +85,7 @@ document.addEventListener('keydown', (event) => {
     input.focus();
 });
 
-terminal.childNodes.forEach(node => {
+terminal.childNodes.forEach((node) => {
     console.log(node.nodeType);
     if (node.nodeType === Node.TEXT_NODE) {
         terminal.removeChild(node);
@@ -96,9 +98,8 @@ const directory = document.getElementById('directory');
 
 export function updatePrompt() {
     let lastPartOfCwd = currentDirectory.split('/').pop();
-    let promptText = "$";
-    userElem.innerText = "admin";
+    let promptText = '$';
+    userElem.innerText = 'admin';
     directory.innerText = `${lastPartOfCwd}/ `;
     promptElem.innerHTML = promptText;
 }
-

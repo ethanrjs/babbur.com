@@ -1,6 +1,5 @@
-import { println } from "ethix:stdio"
+import { println } from 'ethix:stdio';
 export let commands = {};
-
 
 /**
  *
@@ -26,7 +25,7 @@ export function registerCommand(name, description, action, options = {}) {
         onReady,
         onTabComplete,
         usage,
-        longDescription: null,
+        longDescription: null
     };
 
     commands[name] = commandObj;
@@ -46,13 +45,13 @@ export function getCommandHelp(name) {
         }
 
         if (aliases.length === 0) {
-            aliases = ['none'.gray]
+            aliases = ['none'.gray];
         }
 
-
-        const helpText = `${"Description".green}: ${longDescription || description}\n${"Aliases".green}: ${aliases.join(', ')}\n${"Usage".green}: ${commands[name]?.usage?.greenBright || 'none'.gray}`;
+        const helpText = `${'Description'.green}: ${longDescription || description}\n${'Aliases'.green}: ${aliases.join(
+            ', '
+        )}\n${'Usage'.green}: ${commands[name]?.usage?.greenBright || 'none'.gray}`;
         return helpText;
     }
     return `Command not found: ${name}`;
 }
-
