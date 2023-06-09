@@ -1,10 +1,4 @@
 {
-  "snek": {
-    "version": "1.0.1",
-    "path": "snek",
-    "description": "snek gam",
-    "author": "Ethix"
-  },
   "uptime": {
     "version": "0.0.2",
     "path": "uptime",
@@ -17,10 +11,10 @@
     "description": "float: left;",
     "author": "Ethix"
   },
-  "nord": {
-    "version": "1",
-    "path": "nord",
-    "description": "A port of the Nord theme for Ethix. Also includes the IBM Plex Mono font, because it's cool.",
+  "snek": {
+    "version": "1.0.1",
+    "path": "snek",
+    "description": "snek gam",
     "author": "Ethix"
   },
   "print": {
@@ -33,6 +27,12 @@
     "version": "1.0.5",
     "path": "neofetch",
     "description": "A command-line system information tool written in JS",
+    "author": "Ethix"
+  },
+  "nord": {
+    "version": "1",
+    "path": "nord",
+    "description": "A port of the Nord theme for Ethix. Also includes the IBM Plex Mono font, because it's cool.",
     "author": "Ethix"
   }
 }

@@ -5,7 +5,6 @@ import { updatePrompt } from "ethix:inputHandler";
 let fileSystem = {};
 export let currentDirectory = '/';
 
-
 // on page load, set the current directory to the cwd
 window.addEventListener('load', () => {
     currentDirectory = localStorage.getItem('cwd') || '/';

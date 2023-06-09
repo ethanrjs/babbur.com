@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=JetBrains+Mono:100,200,300,regular,500,600,700,800,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic);
+
 body {
     margin: 0;
     font-family: 'JetBrains Mono', monospace;
@@ -28,10 +29,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    
+
 }
 
-#input-line > * {
+#input-line>* {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -62,7 +63,9 @@ body {
     font-size: 13pt;
     line-height: 1.2;
     cursor: default;
-
+    font-weight: 300;
+    padding: 0;
+    padding-left: 3px;
 }
 
 #input::selection {
@@ -72,39 +75,139 @@ body {
 
 /* term colors - styles.css */
 
-.terminal-color-red { color: #C14141; }
-.terminal-color-redBright { color: #EA6565; }
-.terminal-color-yellow { color: #D2C42F; }
-.terminal-color-yellowBright { color: #F3E54C; }
-.terminal-color-green { color: #5FB83E; }
-.terminal-color-greenBright { color: #85E562; }
-.terminal-color-blue { color: #3E6FB8; }
-.terminal-color-blueBright { color: #65A0F8; }
-.terminal-color-magenta { color: #9A3FBB; }
-.terminal-color-magentaBright { color: #D269F8; }
-.terminal-color-cyan { color: #42C2C2; }
-.terminal-color-cyanBright { color: #80F8EE; }
-.terminal-color-white { color: #F0F0F0; }
-.terminal-color-whiteBright { color: #FFFFFF; }
-.terminal-color-gray { color: #A0A0A0; }
-.terminal-color-black { color: #111111; }
-.terminal-color-blackBright { color: #222222; }
+.terminal-color-red {
+    color: #C14141;
+}
+
+.terminal-color-redBright {
+    color: #EA6565;
+}
+
+.terminal-color-yellow {
+    color: #D2C42F;
+}
+
+.terminal-color-yellowBright {
+    color: #F3E54C;
+}
+
+.terminal-color-green {
+    color: #5FB83E;
+}
+
+.terminal-color-greenBright {
+    color: #85E562;
+}
+
+.terminal-color-blue {
+    color: #3E6FB8;
+}
+
+.terminal-color-blueBright {
+    color: #65A0F8;
+}
+
+.terminal-color-magenta {
+    color: #9A3FBB;
+}
+
+.terminal-color-magentaBright {
+    color: #D269F8;
+}
+
+.terminal-color-cyan {
+    color: #42C2C2;
+}
+
+.terminal-color-cyanBright {
+    color: #80F8EE;
+}
+
+.terminal-color-white {
+    color: #F0F0F0;
+}
+
+.terminal-color-whiteBright {
+    color: #FFFFFF;
+}
+
+.terminal-color-gray {
+    color: #A0A0A0;
+}
+
+.terminal-color-black {
+    color: #111111;
+}
+
+.terminal-color-blackBright {
+    color: #222222;
+}
 
 /* background */
-.terminal-bgColor-red { background-color: #C14141; }
-.terminal-bgColor-redBright { background-color: #EA6565; }
-.terminal-bgColor-yellow { background-color: #D2C42F; }
-.terminal-bgColor-yellowBright { background-color: #F3E54C; }
-.terminal-bgColor-green { background-color: #5FB83E; }
-.terminal-bgColor-greenBright { background-color: #85E562; }
-.terminal-bgColor-blue { background-color: #3E6FB8; }
-.terminal-bgColor-blueBright { background-color: #65A0F8; }
-.terminal-bgColor-magenta { background-color: #9A3FBB; }
-.terminal-bgColor-magentaBright { background-color: #D269F8; }
-.terminal-bgColor-cyan { background-color: #42C2C2; }
-.terminal-bgColor-cyanBright { background-color: #80F8EE; }
-.terminal-bgColor-white { background-color: #F0F0F0; }
-.terminal-bgColor-whiteBright { background-color: #FFFFFF; }
-.terminal-bgColor-gray { background-color: #A0A0A0; }
-.terminal-bgColor-black { background-color: #111111; }
-.terminal-bgColor-blackBright { background-color: #222222; }
+.terminal-bgColor-red {
+    background-color: #C14141;
+}
+
+.terminal-bgColor-redBright {
+    background-color: #EA6565;
+}
+
+.terminal-bgColor-yellow {
+    background-color: #D2C42F;
+}
+
+.terminal-bgColor-yellowBright {
+    background-color: #F3E54C;
+}
+
+.terminal-bgColor-green {
+    background-color: #5FB83E;
+}
+
+.terminal-bgColor-greenBright {
+    background-color: #85E562;
+}
+
+.terminal-bgColor-blue {
+    background-color: #3E6FB8;
+}
+
+.terminal-bgColor-blueBright {
+    background-color: #65A0F8;
+}
+
+.terminal-bgColor-magenta {
+    background-color: #9A3FBB;
+}
+
+.terminal-bgColor-magentaBright {
+    background-color: #D269F8;
+}
+
+.terminal-bgColor-cyan {
+    background-color: #42C2C2;
+}
+
+.terminal-bgColor-cyanBright {
+    background-color: #80F8EE;
+}
+
+.terminal-bgColor-white {
+    background-color: #F0F0F0;
+}
+
+.terminal-bgColor-whiteBright {
+    background-color: #FFFFFF;
+}
+
+.terminal-bgColor-gray {
+    background-color: #A0A0A0;
+}
+
+.terminal-bgColor-black {
+    background-color: #111111;
+}
+
+.terminal-bgColor-blackBright {
+    background-color: #222222;
+}
