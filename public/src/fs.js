@@ -136,7 +136,7 @@ function resolvePath(path) {
 
 function cat(args) {
     if (args.length === 0) {
-        throw new FileSystemError('Usage: fs cat <file>');
+        throw new FileSystemError('Usage: cat <file>');
     }
 
     const filePath = resolvePath(args[0]);
@@ -159,7 +159,7 @@ function cd(args) {
 
 function mkdir(args) {
     if (args.length === 0) {
-        throw new FileSystemError('Usage: fs mkdir <directory>');
+        throw new FileSystemError('Usage: mkdir <directory>');
     }
     const dirPath = resolvePath(args[0]);
     createDirectory(dirPath);
@@ -167,7 +167,7 @@ function mkdir(args) {
 
 function rm(args) {
     if (args.length === 0) {
-        throw new FileSystemError('Usage: fs rm <file/directory>');
+        throw new FileSystemError('Usage: rm <file/directory>');
     }
     const entryPath = resolvePath(args[0]);
     deleteEntry(entryPath);
