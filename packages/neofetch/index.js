@@ -1,7 +1,6 @@
 import { registerCommand } from "ethix:commands"
 let loadStartTime = Date.now()
 
-
 registerCommand("neofetch", "Prints a cool ASCII art logo", () => {
     const logoLines =
         `.
@@ -55,45 +54,41 @@ ${"Resolution".greenBright}: ${window.innerWidth + "x" + window.innerHeight}
     for (let i = 0; i < paddedLogoLines.length; i++) {
         result += paddedLogoLines[i] + (sideLines[i] || '') + '\n';
     }
-    const colors = [
+    const darkColors = [
         "",
         "bgRed",
-        "bgRedBright",
         "bgYellow",
-        "bgYellowBright",
         "bgGreen",
-        "bgGreenBright",
         "bgBlue",
-        "bgBlueBright",
         "bgMagenta",
-        "bgMagentaBright",
         "bgCyan",
-        "bgCyanBright",
         "bgWhite",
-        "bgWhiteBright",
         "bgGray",
         "bgBlack",
+    ];
+
+    const lightColors = [
+        "",
+        "bgRedBright",
+        "bgYellowBright",
+        "bgGreenBright",
+        "bgBlueBright",
+        "bgMagentaBright",
+        "bgCyanBright",
+        "bgWhiteBright",
         "bgBlackBright",
     ];
-    // literally no fucking clue why entering a space at2 653ytyhetyy65365y365y65eyt
 
-    // rewrite to work with array
-    const colorLine = colors.reduce((acc, colorName) => {
+    const darkColorLine = darkColors.reduce((acc, colorName) => {
         return acc + "   "[colorName];
-        // This here, is the ugliest fucking line of code I have written in all 
-        //     // of my years of web development. Why, in gods name, does putting an 
-        //     // array up to a string reference the string's property of the 
-        //     // color name, rather than throwing an error?? Why doesn't it just try
-        //     // to get the char? Not only that, but getting the keynames of 
-        //     // an object, and then reducing, there's like fifteen higher-order
-        //     /// functions in here. Why is this code written like this???
-        //     // I'll never know. I will never understand this language,
-        //     // this god-forsaken terrible programming language that I willingly
-        //     // choose to suffer through writing. 
     });
 
-    const colorPadding = ' '.repeat(maxLength - 43);
-    result += colorPadding + colorLine;
+    const lightColorLine = lightColors.reduce((acc, colorName) => {
+        return acc + "   "[colorName];
+    });
+
+    const colorPadding = ' '.repeat(maxLength - 48);
+    result += colorPadding + darkColorLine + '\n' + colorPadding + lightColorLine;
 
     return result;
 });
