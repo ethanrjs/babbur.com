@@ -7,7 +7,6 @@ import dotenv from "dotenv";
 import packagesRouter from "./routes/packages.js";
 import searchRouter from "./routes/search.js";
 import versionRouter from "./routes/version.js";
-import supportRouter from "./routes/support.js";
 
 const app = express();
 dotenv.config();
