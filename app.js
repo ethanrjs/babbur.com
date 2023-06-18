@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import packagesRouter from "./routes/packages.js";
 import searchRouter from "./routes/search.js";
 import versionRouter from "./routes/version.js";
+import supportRouter from "./routes/support.js";
 
 const app = express();
 dotenv.config();
@@ -54,7 +55,7 @@ setInterval(refreshPackageList, REFRESH_INTERVAL);
 app.use("/packages", packagesRouter);
 app.use("/search", searchRouter);
 app.use("/version", versionRouter);
-
+app.use("/this-is-why-i-should-be-support-for-binmaster", supportRouter);
 app.use((req, res) => {
     res.status(404).send("Sorry, we couldn't find that!");
 });
