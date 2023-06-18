@@ -55,7 +55,10 @@ setInterval(refreshPackageList, REFRESH_INTERVAL);
 app.use("/packages", packagesRouter);
 app.use("/search", searchRouter);
 app.use("/version", versionRouter);
-app.use("/this-is-why-i-should-be-support-for-binmaster", supportRouter);
+app.use("/this-is-why-i-should-be-support-for-binmaster", (req, res) => {
+    res.sendFile("support.html", { root: join(import.meta.dir, "public") });
+});
+
 app.use((req, res) => {
     res.status(404).send("Sorry, we couldn't find that!");
 });
